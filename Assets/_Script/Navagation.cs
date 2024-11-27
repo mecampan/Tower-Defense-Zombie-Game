@@ -4,9 +4,9 @@ using System.Linq;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class Navagation : MonoBehaviour
+public class Navagation
 {
-    public Vector3Int[] FindShortestPath(ref GridData data, Vector3Int Start, Vector3Int End)
+    public static Vector3Int[] FindShortestPath(ref GridData data, Vector3Int Start, Vector3Int End)
     {
         Dictionary<Vector3Int, TileData> SearchedTiles = new();
 
@@ -72,7 +72,7 @@ public class Navagation : MonoBehaviour
         }
         return outArray;
     }
-    private Vector3Int[] getNearbyTiles(ref GridData data, ref Dictionary<Vector3Int, TileData> SearchedTiles, Vector3Int tile)
+    private static Vector3Int[] getNearbyTiles(ref GridData data, ref Dictionary<Vector3Int, TileData> SearchedTiles, Vector3Int tile)
     {
         Vector3Int[] outArray = new Vector3Int[] { };
         for (int x = -1; x <= 1; x++) {
