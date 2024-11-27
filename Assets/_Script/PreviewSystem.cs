@@ -102,4 +102,11 @@ public class PreviewSystem : MonoBehaviour
             position.y + previewYOffset, 
             position.z);
     }
+
+    internal void StartShowingRemovePreview()
+    {
+        cellIndicator.SetActive(true);
+        PrepareCursor(Vector2Int.one);
+        ApplyFeedbackToCursor(false);
+    }
 }

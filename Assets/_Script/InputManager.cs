@@ -1,7 +1,4 @@
-
 using System;
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.EventSystems;
 
@@ -9,6 +6,7 @@ public class InputManager : MonoBehaviour
 {
     [SerializeField]
     private Camera sceneCamera;
+
     private Vector3 lastPosition;
 
     [SerializeField]
@@ -16,7 +14,7 @@ public class InputManager : MonoBehaviour
 
     public event Action OnClicked, OnExit;
 
-    public void Update()
+    private void Update()
     {
         if(Input.GetMouseButtonDown(0))
             OnClicked?.Invoke();
@@ -27,7 +25,7 @@ public class InputManager : MonoBehaviour
     public bool IsPointerOverUI()
         => EventSystem.current.IsPointerOverGameObject();
 
-    public Vector3 GetSelectedMapPosition() 
+    public Vector3 GetSelectedMapPosition()
     {
         Vector3 mousePos = Input.mousePosition;
         mousePos.z = sceneCamera.nearClipPlane;
