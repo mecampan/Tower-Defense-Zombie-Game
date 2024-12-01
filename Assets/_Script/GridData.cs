@@ -76,6 +76,21 @@ public class GridData
         return true;
     }
 
+    public bool IsTileOpen(Vector3Int gridPosition)
+    {
+
+        // Calculate all grid positions the object will occupy
+        List<Vector3Int> positionsToOccupy = CalculatePositions(gridPosition, new Vector2Int(1, 1));
+
+        // Check if the position is already occupied
+        if (placedObjects.ContainsKey(gridPosition) && (gridPosition.x <= 5 && gridPosition.x >= -5 && gridPosition.z <= 5 && gridPosition.z >= -5))
+        {
+            return false;
+        }
+
+        return true;
+    }
+
     internal int GetRepresentationIndex(Vector3Int gridPosition)
     {
         if (placedObjects.ContainsKey(gridPosition) == false)

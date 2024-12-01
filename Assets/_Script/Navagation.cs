@@ -1,90 +1,134 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
+using UnityEditor;
 using UnityEngine;
+using UnityEngine.Rendering;
 using UnityEngine.UI;
 
-public class Navagation
+public class Navagation : MonoBehaviour
 {
-    public static Vector3Int[] FindShortestPath(ref GridData data, Vector3Int Start, Vector3Int End)
+    public static List<Vector3Int> FindShortestPath(ref GridData data, Vector3Int Start, Vector3Int End, Grid grid)
     {
+        List<Vector3Int> outArray = new List<Vector3Int> { };
+        if (Start.Equals(End))
+        {
+            return outArray;
+        }
+
         Dictionary<Vector3Int, TileData> SearchedTiles = new();
 
-        Vector3Int[] tileQueue = new Vector3Int[] {End};
+        List<Vector3Int> tileQueue = new List<Vector3Int> {End};
 
         int count = 0;
 
         for (int i = 0; i < 500; i++)
         {
-            Vector3Int[] tmpTileQueue = new Vector3Int[] { };
+            print("int1: " + i);
+            List<Vector3Int> tmpTileQueue = new List<Vector3Int> { };
             foreach (Vector3Int tile in tileQueue)
             {
-                TileData tileData = new TileData();
-                tileData.pos = tile;
-                tileData.num = count;
-                SearchedTiles.Add(tile, tileData);
-            }
-            count++;
-            foreach (Vector3Int tile in tileQueue)
-            {
-                foreach (Vector3Int tmpTile in getNearbyTiles(ref data, ref SearchedTiles, tile))
+                if (!SearchedTiles.ContainsKey(tile))
                 {
-                    tmpTileQueue.Append(tmpTile);
+                    TileData tileData = new TileData();
+                    tileData.pos = tile;
+                    tileData.num = count;
+                    
+                    SearchedTiles.Add(tile, tileData);
                 }
             }
-            tileQueue = tmpTileQueue;
+
+            foreach (Vector3Int tile in tileQueue)
+            {
+                List<Vector3Int> tmpList = getNearbyWalkableTiles(ref data, ref SearchedTiles, tile);
+                foreach (Vector3Int tmpTile in tmpList)
+                {
+                    tmpTileQueue.Add(tmpTile);
+                }
+            }
+            tileQueue.Clear();
+            foreach(Vector3Int tile in tmpTileQueue)
+            {
+                tileQueue.Add(tile);
+            }
+            count++;
+            if(tileQueue.Count == 0)
+            {
+                break;
+            }
         }
-        Vector3Int[] outArray = new Vector3Int[] { };
 
         TileData currentTile = new TileData();
-        currentTile.pos = Start;
-        currentTile.num = 999999;
-
+        if(!SearchedTiles.TryGetValue(Start, out currentTile))
+        {
+            return outArray;
+        }
 
         for (int i = 0; i < 500; i++)
         {
+            print("int2: " + i);
             TileData minTile = new TileData();
             minTile.num = 999999;
             bool bFoundTile = false;
-            foreach (Vector3Int tmpTile in getNearbyTiles(ref data, ref SearchedTiles, currentTile.pos))
+            foreach (Vector3Int tmpTile in getNearbyTracedTiles(ref data, ref SearchedTiles, currentTile.pos))
             {
                 TileData tmpNum = new TileData();
                 if (SearchedTiles.ContainsKey(tmpTile))
                 {
-                    SearchedTiles.TryGetValue(tmpTile, out tmpNum);
-                    if(tmpNum.num < minTile.num)
-                    {
-                        minTile = tmpNum;
-                        bFoundTile = true;
+                    if(SearchedTiles.TryGetValue(tmpTile, out tmpNum)){
+                        if (tmpNum.num < minTile.num)
+                        {
+                            minTile = tmpNum;
+                            bFoundTile = true;
+                        }
                     }
                 }
             }
-            if (bFoundTile)
+            if (bFoundTile && minTile.num < currentTile.num)
             {
-                outArray.Append(currentTile.pos);
-                if(currentTile.pos.Equals(End) || currentTile.num == 0)
-                {
-                    return outArray;
-                }
+                outArray.Add(currentTile.pos);
                 currentTile = minTile;
             }
-
+            else
+            {
+                break;
+            }
+        }
+        outArray.Add(End);
+        outArray.Reverse();
+        return outArray;
+    }
+    private static List<Vector3Int> getNearbyWalkableTiles(ref GridData data, ref Dictionary<Vector3Int, TileData> SearchedTiles, Vector3Int tile)
+    {
+        List<Vector3Int> outArray = new List<Vector3Int>();
+        for (int x = -1; x <= 1; x++) {
+            for (int z = -1; z <= 1; z++)
+            {
+                Vector3Int tmpTile = new Vector3Int(tile.x + x, tile.y, tile.z + z);
+                if ((tile.x + x <= 5 && tile.x + x >= -5 && tile.z + z <= 5 && tile.z + z >= -5) && (x == 0 ^ z == 0) && data.IsTileOpen(tmpTile) && !SearchedTiles.ContainsKey(tmpTile))
+                {
+                    outArray.Add(tmpTile);
+                }
+            }
         }
         return outArray;
     }
-    private static Vector3Int[] getNearbyTiles(ref GridData data, ref Dictionary<Vector3Int, TileData> SearchedTiles, Vector3Int tile)
+    private static List<Vector3Int> getNearbyTracedTiles(ref GridData data, ref Dictionary<Vector3Int, TileData> SearchedTiles, Vector3Int tile)
     {
-        Vector3Int[] outArray = new Vector3Int[] { };
-        for (int x = -1; x <= 1; x++) {
-            for (int y = -1; y <= 1; y++)
+        List<Vector3Int> outArray = new List<Vector3Int>();
+        for (int x = -1; x <= 1; x++)
+        {
+            for (int z = -1; z <= 1; z++)
             {
-                if((x == 0 ^ y == 0) && data.CanPlaceObjectAt(new Vector3Int(tile.x + x, tile.y + y, tile.z), new Vector2Int(1, 1)) && !SearchedTiles.ContainsKey(new Vector3Int(tile.x + x, tile.y + y, tile.z)))
+                Vector3Int tmpTile = new Vector3Int(tile.x + x, tile.y, tile.z + z);
+                if ((x == 0 ^ z == 0) && SearchedTiles.ContainsKey(tmpTile))
                 {
-                    outArray.Append(new Vector3Int(tile.x + x, tile.y + y, tile.z));
+                    outArray.Add(tmpTile);
                 }
             }
         }
-        return null;
+        return outArray;
     }
 }
 

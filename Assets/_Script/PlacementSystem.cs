@@ -15,7 +15,7 @@ public class PlacementSystem : MonoBehaviour
 
     [SerializeField]
 
-    private GridData floorData, furnitureData, turretData;
+    public GridData floorData, furnitureData, turretData;
 
     [SerializeField]
     private PreviewSystem preview;
