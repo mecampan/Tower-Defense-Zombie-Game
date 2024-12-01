@@ -15,7 +15,7 @@ public class Navagation : MonoBehaviour
         List<Vector3Int> outArray = new List<Vector3Int> { };
         if (Start.Equals(End))
         {
-            print("CalcCount1: " + CalcCount);
+            //print("CalcCount1: " + CalcCount);
             return outArray;
         }
 
@@ -34,7 +34,7 @@ public class Navagation : MonoBehaviour
 
         for (int i = 0; i < 500; i++)
         {
-            print("int1: " + i);
+            //print("int1: " + i);
             count++;
             List<Vector3Int> tmpTileQueue = new List<Vector3Int> { };
             foreach (Vector3Int tile in tileQueue)
@@ -64,13 +64,13 @@ public class Navagation : MonoBehaviour
         TileData currentTile = new TileData();
         if(!SearchedTiles.TryGetValue(Start, out currentTile))
         {
-            print("CalcCount1: " + CalcCount);
+            //print("CalcCount1: " + CalcCount);
             return outArray;
         }
-        print("CalcCount1: " + CalcCount);
+        //print("CalcCount1: " + CalcCount);
         for (int i = 0; i < 500; i++)
         {
-            print("int2: " + i);
+            //print("int2: " + i);
             TileData minTile = new TileData();
             minTile.num = 999999;
             bool bFoundTile = false;
@@ -95,7 +95,7 @@ public class Navagation : MonoBehaviour
                 break;
             }
         }
-        print("CalcCount2: " + CalcCount);
+        //print("CalcCount2: " + CalcCount);
         outArray.Add(End);
         outArray.Reverse();
         return outArray;

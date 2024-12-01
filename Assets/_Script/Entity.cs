@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using System.Security.Cryptography;
+using Unity.Mathematics;
 using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.Rendering;
@@ -21,7 +22,7 @@ public class Entity : MonoBehaviour
     List<Vector3Int> path = null;
     GridData gridData = null;
     int currentIndex = 0;
-    const int timer = 1000;
+    const int timer = 100;
     int CurrentTime = timer;
     // Start is called before the first frame update
     void Start()
@@ -56,11 +57,19 @@ public class Entity : MonoBehaviour
                 CurrentTime--;
                 if (path == null)
                 {
-                    path = Navagation.FindShortestPath(ref gridData, getIntPos(), Vector3Int.zero, grid);
-                    currentIndex = path.Count - 1;
-                    if (path != null)
+                    for (int t = 0; t < 10; t++)
                     {
-                        print("path length: " + path.Count);
+                        Vector3Int tmpTarget = new Vector3Int(math.clamp(RandomNumberGenerator.GetInt32(10) - 5, -5, 5), 0, math.clamp(RandomNumberGenerator.GetInt32(10) - 5, -5, 5));
+                        if (gridData.IsTileOpen(tmpTarget))
+                        {
+                            print("target: " + tmpTarget.ToString());
+                            path = Navagation.FindShortestPath(ref gridData, getIntPos(), tmpTarget, grid);
+                            if (path != null && path.Count > 0)
+                            {
+                                currentIndex = path.Count - 1;
+                                break;
+                            }
+                        }
                     }
                 }
                 if (path != null && CurrentTime <= 0)
@@ -68,17 +77,12 @@ public class Entity : MonoBehaviour
                     currentIndex--;
                     if (currentIndex >= 0)
                     {
-                        CurrentTime = 400;
+                        CurrentTime = timer;
                         pos = path[currentIndex];
                     }
-                    if(currentIndex == 0)
+                    if(currentIndex <= 0)
                     {
-                        path = Navagation.FindShortestPath(ref gridData, getIntPos(), new Vector3Int(-5, 0, -5), grid);
-                        currentIndex = path.Count - 1;
-                        if (path != null)
-                        {
-                            print("path length: " + path.Count);
-                        }
+                        path = null;
                     }
                 }
                 else if (path != null && CurrentTime > 0)
@@ -87,7 +91,7 @@ public class Entity : MonoBehaviour
                     {
                         if (currentIndex - 1 >= 0)
                         {
-                            float factor = 1.0f * (1.0f * CurrentTime) / 400.0f;
+                            float factor = 1.0f * (1.0f * CurrentTime) / (1.0f * timer);
                             Vector3Int tmpVecInt1 = path[currentIndex];
                             Vector3Int tmpVecInt2 = path[currentIndex - 1];
                             pos = new Vector3((factor * tmpVecInt1.x) + ((1.0f - factor) * tmpVecInt2.x), (factor * tmpVecInt1.y) + ((1.0f - factor) * tmpVecInt2.y), (factor * tmpVecInt1.z) + ((1.0f - factor) * tmpVecInt2.z));
