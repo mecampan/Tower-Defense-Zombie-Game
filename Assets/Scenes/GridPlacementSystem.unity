@@ -1429,6 +1429,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   pos: {x: 4, y: 0, z: 3}
+  posOffset: {x: -0.5, y: 0, z: -0.5}
   grid: {fileID: 534376281}
   placementSystem: {fileID: 1369282340}
 --- !u!65 &814630279

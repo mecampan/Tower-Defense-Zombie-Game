@@ -13,13 +13,16 @@ public class Entity : MonoBehaviour
     [SerializeField]
     Vector3 pos;
     [SerializeField]
+    Vector3 posOffset;
+    [SerializeField]
     Grid grid;
     [SerializeField]
     PlacementSystem placementSystem;
     List<Vector3Int> path = null;
     GridData gridData = null;
     int currentIndex = 0;
-    int timer = 100;
+    const int timer = 1000;
+    int CurrentTime = timer;
     // Start is called before the first frame update
     void Start()
     {
@@ -37,7 +40,7 @@ public class Entity : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        transform.position = grid.CellToWorld(getIntPos()) + getFloatOffset();
+        transform.position = grid.CellToWorld(getIntPos()) + posOffset + getFloatOffset();
         if (placementSystem == null)
         {
             print("placementSystem not set");
@@ -50,7 +53,7 @@ public class Entity : MonoBehaviour
             }
             if (placementSystem.furnitureData != null)
             {
-                timer--;
+                CurrentTime--;
                 if (path == null)
                 {
                     path = Navagation.FindShortestPath(ref gridData, getIntPos(), Vector3Int.zero, grid);
@@ -60,12 +63,12 @@ public class Entity : MonoBehaviour
                         print("path length: " + path.Count);
                     }
                 }
-                if (path != null && timer <= 0)
+                if (path != null && CurrentTime <= 0)
                 {
                     currentIndex--;
                     if (currentIndex >= 0)
                     {
-                        timer = 100;
+                        CurrentTime = 400;
                         pos = path[currentIndex];
                     }
                     if(currentIndex == 0)
@@ -78,13 +81,13 @@ public class Entity : MonoBehaviour
                         }
                     }
                 }
-                else if (path != null && timer > 0)
+                else if (path != null && CurrentTime > 0)
                 {
                     if (currentIndex >= 0)
                     {
                         if (currentIndex - 1 >= 0)
                         {
-                            float factor = 1.0f * (1.0f * timer) / 100.0f;
+                            float factor = 1.0f * (1.0f * CurrentTime) / 400.0f;
                             Vector3Int tmpVecInt1 = path[currentIndex];
                             Vector3Int tmpVecInt2 = path[currentIndex - 1];
                             pos = new Vector3((factor * tmpVecInt1.x) + ((1.0f - factor) * tmpVecInt2.x), (factor * tmpVecInt1.y) + ((1.0f - factor) * tmpVecInt2.y), (factor * tmpVecInt1.z) + ((1.0f - factor) * tmpVecInt2.z));
