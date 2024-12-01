@@ -36,14 +36,33 @@ public class GridData
 
     public bool CanPlaceObjectAt(Vector3Int gridPosition, Vector2Int objectSize)
     {
-        List<Vector3Int> positionToOccupy = CalculatePositions(gridPosition, objectSize);
-        foreach (var pos in positionToOccupy)
+        // grid boundaries
+        int minX = -5, maxX = 4;
+        int minZ = -5, maxZ = 4;
+
+        // Calculate all grid positions the object will occupy
+        List<Vector3Int> positionsToOccupy = CalculatePositions(gridPosition, objectSize);
+        foreach (var pos in positionsToOccupy)
         {
-            if (placedObjects.ContainsKey(pos))
+            // Check if the position is on the grids boundaries
+            if (pos.x == minX || pos.x == maxX || pos.z == minZ || pos.z == maxZ)
+            {
+                //Debug.LogWarning($"Position {pos} is out of bounds.");
                 return false;
+            }
+
+            // Check if the position is already occupied
+            if (placedObjects.ContainsKey(pos))
+            {
+                //Debug.LogWarning($"Position {pos} is already occupied.");
+                return false;
+            }
+
         }
+
         return true;
     }
+
 
     internal int GetRepresentationIndex(Vector3Int gridPosition)
     {
