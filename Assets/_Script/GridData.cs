@@ -83,24 +83,61 @@ public class GridData
         return placedObjects[gridPosition].PlacedObjectIndex;
     }
 
-public void RemoveObjectAt(Vector3Int gridPosition)
-{
-    if (!placedObjects.ContainsKey(gridPosition)) return;
-
-    PlacementData data = placedObjects[gridPosition];
-
-    foreach (var pos in data.occupiedPositions)
+    public void RemoveObjectAt(Vector3Int gridPosition)
     {
-        if (placedObjects.ContainsKey(pos))
-            placedObjects.Remove(pos);
+        if (!placedObjects.ContainsKey(gridPosition)) return;
+
+        PlacementData data = placedObjects[gridPosition];
+
+        foreach (var pos in data.occupiedPositions)
+        {
+            if (placedObjects.ContainsKey(pos))
+                placedObjects.Remove(pos);
+        }
+
+        if (data.ID >= 5) 
+            turretCount++;
+        else if (data.ID >= 1 && data.ID <= 4) 
+            furnitureCount++;
     }
 
-    if (data.ID >= 5) 
-        turretCount++;
-    else if (data.ID >= 1 && data.ID <= 4) 
-        furnitureCount++;
-}
+    public void RemoveUnsupportedTurrets(GridData furnitureData, GridData turretData, ObjectPlacer objectPlacer)
+    {
+        List<Vector3Int> unsupportedTurrets = new();
 
+        // Iterate over all turrets
+        foreach (var turretEntry in turretData.GetAllPlacedObjects())
+        {
+            Vector3Int turretPosition = turretEntry.Key;
+
+            // Check if there is no furniture at the same position
+            if (!furnitureData.HasObjectAt(turretPosition))
+            {
+                unsupportedTurrets.Add(turretPosition);
+            }
+        }
+
+        // Remove unsupported turrets
+        foreach (var position in unsupportedTurrets)
+        {
+            int index = turretData.GetRepresentationIndex(position);
+            if (index != -1)
+            {
+                turretData.RemoveObjectAt(position);
+                objectPlacer.RemoveObjectAt(index);
+            }
+        }
+    }
+
+    public bool HasObjectAt(Vector3Int gridPosition)
+    {
+        return placedObjects.ContainsKey(gridPosition);
+    }
+
+    public Dictionary<Vector3Int, PlacementData> GetAllPlacedObjects()
+    {
+        return placedObjects;
+    }
 }
 
 public class PlacementData

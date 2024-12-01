@@ -41,38 +41,48 @@ public class RemovingState : IBuildingState
     {
         GridData selectedData = null;
 
-        // Check if the object is in turretData, furnitureData, or floorData
-        if (turretData.CanPlaceObjectAt(gridPosition, Vector2Int.one) == false)
+        // Determine which layer the object belongs to
+        if (!turretData.CanPlaceObjectAt(gridPosition, Vector2Int.one))
         {
             selectedData = turretData;
         }
-        else if (furnitureData.CanPlaceObjectAt(gridPosition, Vector2Int.one) == false)
+        else if (!furnitureData.CanPlaceObjectAt(gridPosition, Vector2Int.one))
         {
             selectedData = furnitureData;
         }
-        else if (floorData.CanPlaceObjectAt(gridPosition, Vector2Int.one) == false)
+        else if (!floorData.CanPlaceObjectAt(gridPosition, Vector2Int.one))
         {
             selectedData = floorData;
         }
 
         if (selectedData == null)
         {
-            // Play the "wrong placement" sound
             soundFeedback.PlaySound(SoundType.wrongPlacement);
+            return;
         }
-        else
+
+        gameObjectIndex = selectedData.GetRepresentationIndex(gridPosition);
+        if (gameObjectIndex == -1)
         {
-            soundFeedback.PlaySound(SoundType.Remove);
-            gameObjectIndex = selectedData.GetRepresentationIndex(gridPosition);
-            if (gameObjectIndex == -1)
-                return;
-            selectedData.RemoveObjectAt(gridPosition);
-            objectPlacer.RemoveObjectAt(gameObjectIndex);
+            Debug.LogWarning($"No object found at position {gridPosition} to remove.");
+            return;
+        }
+
+        soundFeedback.PlaySound(SoundType.Remove);
+        selectedData.RemoveObjectAt(gridPosition);
+        objectPlacer.RemoveObjectAt(gameObjectIndex);
+
+        // Remove unsupported turrets when furniture is removed
+        if (selectedData == furnitureData)
+        {
+            turretData.RemoveUnsupportedTurrets(furnitureData, turretData, objectPlacer);
         }
 
         Vector3 cellPosition = grid.CellToWorld(gridPosition);
         previewSystem.UpdatePosition(cellPosition, CheckIfSelectionIsValid(gridPosition));
     }
+
+
 
     private bool CheckIfSelectionIsValid(Vector3Int gridPosition)
     {
