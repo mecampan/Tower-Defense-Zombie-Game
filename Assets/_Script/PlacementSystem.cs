@@ -1,5 +1,5 @@
 using UnityEngine;
-
+using TMPro;
 public class PlacementSystem : MonoBehaviour
 {
     [SerializeField]
@@ -28,6 +28,9 @@ public class PlacementSystem : MonoBehaviour
     IBuildingState buildingState;
 
     [SerializeField]
+    private UIManager uiManager;
+
+    [SerializeField]
     private SoundFeedback soundFeedback;
 
     private void Start()
@@ -36,6 +39,8 @@ public class PlacementSystem : MonoBehaviour
         floorData = new();
         furnitureData = new();
         turretData = new();
+
+        UpdateUI();
     }
 
     public void StartPlacement(int ID)
@@ -74,7 +79,6 @@ public class PlacementSystem : MonoBehaviour
         Vector3Int gridPosition = grid.WorldToCell(mousePosition);
 
         buildingState.OnAction(gridPosition);
-
     }
 
     //private bool CheckPlacementValidity(Vector3Int gridPosition, int selectedObjectIndex)
@@ -99,6 +103,12 @@ public class PlacementSystem : MonoBehaviour
         buildingState = null;
     }
 
+    private void UpdateUI()
+    {
+        uiManager.UpdateTurretCounter(turretData.GetTurretCount());
+        uiManager.UpdateFurnitureCounter(furnitureData.GetFurnitureCount());
+    }
+
     private void Update()
     {
         if (buildingState == null)
@@ -110,6 +120,7 @@ public class PlacementSystem : MonoBehaviour
             buildingState.UpdateState(gridPosition);
             lastDetectedPosition = gridPosition;
         }
-        
+
+        UpdateUI();   
     }
 }

@@ -6,19 +6,36 @@ public class GridData
 {
     Dictionary<Vector3Int, PlacementData> placedObjects = new();
 
+    private int turretCount = 8;
+    private int furnitureCount = 12;
+
+    public int GetTurretCount() => turretCount;
+    public int GetFurnitureCount() => furnitureCount;
+
     public void AddObjectAt(Vector3Int gridPosition,
                             Vector2Int objectSize,
                             int ID,
                             int placedObjectIndex)
     {
+        // Ensure valid placement based on ID
+        if (ID >= 5 && turretCount <= 0)
+            throw new Exception("No turrets remaining to place.");
+        if (ID >= 1 && ID <= 4 && furnitureCount <= 0)
+            throw new Exception("No furniture remaining to place.");
+
         List<Vector3Int> positionToOccupy = CalculatePositions(gridPosition, objectSize);
         PlacementData data = new PlacementData(positionToOccupy, ID, placedObjectIndex);
         foreach (var pos in positionToOccupy)
         {
             if (placedObjects.ContainsKey(pos))
-                throw new Exception($"Dictionary already contains this cell positiojn {pos}");
+                throw new Exception($"Dictionary already contains this cell position {pos}");
             placedObjects[pos] = data;
         }
+
+        if (ID >= 5) 
+            turretCount--;
+        else if (ID >= 1 && ID <= 4) 
+            furnitureCount--;
     }
 
     private List<Vector3Int> CalculatePositions(Vector3Int gridPosition, Vector2Int objectSize)
@@ -36,33 +53,28 @@ public class GridData
 
     public bool CanPlaceObjectAt(Vector3Int gridPosition, Vector2Int objectSize)
     {
-        // grid boundaries
         int minX = -5, maxX = 4;
         int minZ = -5, maxZ = 4;
 
-        // Calculate all grid positions the object will occupy
+        if (objectSize == Vector2Int.zero)
+            return false;
+
         List<Vector3Int> positionsToOccupy = CalculatePositions(gridPosition, objectSize);
+
         foreach (var pos in positionsToOccupy)
         {
-            // Check if the position is on the grids boundaries
-            if (pos.x == minX || pos.x == maxX || pos.z == minZ || pos.z == maxZ)
-            {
-                //Debug.LogWarning($"Position {pos} is out of bounds.");
+            if (pos.x <= minX || pos.x >= maxX || pos.z <= minZ || pos.z >= maxZ)
                 return false;
-            }
 
-            // Check if the position is already occupied
             if (placedObjects.ContainsKey(pos))
-            {
-                //Debug.LogWarning($"Position {pos} is already occupied.");
                 return false;
-            }
-
         }
+
+        if (furnitureCount <= 0 || turretCount <= 0)
+            return false;
 
         return true;
     }
-
 
     internal int GetRepresentationIndex(Vector3Int gridPosition)
     {
@@ -71,13 +83,24 @@ public class GridData
         return placedObjects[gridPosition].PlacedObjectIndex;
     }
 
-    internal void RemoveObjectAt(Vector3Int gridPosition)
+public void RemoveObjectAt(Vector3Int gridPosition)
+{
+    if (!placedObjects.ContainsKey(gridPosition)) return;
+
+    PlacementData data = placedObjects[gridPosition];
+
+    foreach (var pos in data.occupiedPositions)
     {
-        foreach (var pos in placedObjects[gridPosition].occupiedPositions)
-        {
+        if (placedObjects.ContainsKey(pos))
             placedObjects.Remove(pos);
-        }
     }
+
+    if (data.ID >= 5) 
+        turretCount++;
+    else if (data.ID >= 1 && data.ID <= 4) 
+        furnitureCount++;
+}
+
 }
 
 public class PlacementData

@@ -12,7 +12,7 @@ public class PlacementState : IBuildingState
     ObjectsDatabaseSO database;
     GridData floorData;
     GridData furnitureData;
-    GridData turretData; // Add turretData
+    GridData turretData;
     ObjectPlacer objectPlacer;
     SoundFeedback soundFeedback;
 
