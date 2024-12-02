@@ -3,7 +3,16 @@ guid: 6f29bb040c39a84469e9e01cfac5b7f2
 MonoImporter:
   externalObjects: {}
   serializedVersion: 2
-  defaultReferences: []
+  defaultReferences:
+  - mouseIndicator: {fileID: 3706936160302216349, guid: 1a58cd6aa9af4a348a27868ec16a4596,
+      type: 3}
+  - inputManager: {instanceID: 0}
+  - grid: {instanceID: 0}
+  - database: {fileID: 11400000, guid: b893a437e5f3872488540a74e16cc9be, type: 2}
+  - gridVisualization: {instanceID: 0}
+  - placingItem: {instanceID: 0}
+  - cantPlaceItem: {instanceID: 0}
+  - preview: {instanceID: 0}
   executionOrder: 0
   icon: {instanceID: 0}
   userData: 
