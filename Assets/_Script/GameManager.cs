@@ -7,6 +7,7 @@ public class GameManager : MonoBehaviour
     [SerializeField] private GameObject panel; // Parent object containing the red-boxed UI elements
     [SerializeField] private GameObject startPlayModeButton; // The "Start Play Mode" button
     [SerializeField] private PlacementSystem placementSystem;
+    [SerializeField] private CustomerManager customerManager;
 
     public void StartPlayMode()
     {
@@ -28,5 +29,7 @@ public class GameManager : MonoBehaviour
     {
         // Start gameplay (e.g., spawn enemies, start timers, etc.)
         Debug.Log("Play Mode started! Gameplay logic goes here.");
+
+        customerManager.BeginCustomerSpawner();
     }
 }

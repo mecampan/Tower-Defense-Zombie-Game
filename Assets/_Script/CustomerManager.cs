@@ -7,7 +7,8 @@ public class CustomerManager : MonoBehaviour
     [SerializeField]
     [Header("Customer Settings")]
     public GameObject customerPrefab;
-    public Vector3Int exitPoint; // The exit point after shopping
+    [SerializeField]
+    private Vector3Int entryPoint, exitPoint; // The entry and exit point after shopping
     [SerializeField]
     public List<Vector3Int> shelves; // List of shelf locations
     public float spawnInterval = 2f; // Time between customer spawns
@@ -16,8 +17,6 @@ public class CustomerManager : MonoBehaviour
     public float shelfWaitTime = 3f; // Time customers wait at each shelf
     [SerializeField]
     Grid grid;
-
-    private Vector3Int entryPoint;
     private IEnumerator SpawnCustomers()
     {
         while (true)
@@ -35,6 +34,11 @@ public class CustomerManager : MonoBehaviour
         GameObject customer = Instantiate(customerPrefab, grid.CellToWorld(entryPoint), Quaternion.identity);
         Customer customerEntity = customer.AddComponent<Customer>();
         //customerEntity.Setup(shelves, exitPoint, customerSpeed, shelfWaitTime);
+    }
+
+    public void BeginCustomerSpawner()
+    {
+        SpawnCustomers();
     }
 }
 //public class CustomerManager : MonoBehaviour
