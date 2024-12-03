@@ -14,6 +14,35 @@ public class Zombie : Entity
         StartCoroutine(AttackNearestCustomer());
     }
 
+    private List<Vector3Int> GetZombiePosList()
+    {
+        List<Vector3Int> outList = new List<Vector3Int> { };
+        Zombie[] Zombies = Zombie.FindObjectsOfType<Zombie>();
+        foreach (Zombie zombie in Zombies)
+        {
+            if (zombie != null && zombie != this)
+            {
+                if (!zombie.getIntPos().Equals(getIntPos()))
+                {
+                    outList.Add(zombie.getIntPos());
+                }
+                if (zombie.path != null && zombie.currentIndex >= 0 && zombie.currentIndex <= zombie.path.Count - 1)
+                {
+                    outList.Add(zombie.path[zombie.currentIndex]);
+                }
+                if (zombie.path != null && zombie.currentIndex - 1 >= 0 && zombie.currentIndex - 1 <= zombie.path.Count - 1)
+                {
+                    outList.Add(zombie.path[zombie.currentIndex - 1]);
+                }
+                //if (zombie.path != null && zombie.currentIndex - 2 >= 0 && zombie.currentIndex - 2 <= zombie.path.Count - 1)
+                //{
+                //    outList.Add(zombie.path[zombie.currentIndex - 2]);
+                //}
+            }
+        }
+        return outList;
+    }
+
     private void FindNearestCustomer()
     {
         if (placementSystem == null)
@@ -32,12 +61,15 @@ public class Zombie : Entity
                 Customer[] Customers = Customer.FindObjectsOfType<Customer>();
                 foreach (Customer customer in Customers)
                 {
-                    float tmpDist = Vector3.Distance(customer.getPos(), pos);
-                    if (customer != null && tmpDist < minDist)
+                    if (customer != null)
                     {
-                        minDist = tmpDist;
-                        TargetTile = customer.getIntPos();
-                        //print("found Customer: " + TargetTile.ToString());
+                        float tmpDist = Vector3.Distance(customer.getPos(), pos);
+                        if (tmpDist < minDist)
+                        {
+                            minDist = tmpDist;
+                            TargetTile = customer.getIntPos();
+                            //print("found Customer: " + TargetTile.ToString());
+                        }
                     }
                 }
             }
@@ -50,7 +82,7 @@ public class Zombie : Entity
             if (path == null)
             {
                 FindNearestCustomer();
-                FindPath(TargetTile);
+                FindPath(TargetTile, GetZombiePosList());
             }
             else if(Vector3.Distance(pos, TargetTile) < 0.5)
             {

@@ -29,7 +29,7 @@ public class Entity : MonoBehaviour
     protected PlacementSystem placementSystem;
     protected List<Vector3Int> path = null;
     protected GridData gridData = null;
-    int currentIndex = 0;
+    protected int currentIndex = 0;
     protected const int timer = 100;
     protected int CurrentTime = timer;
 
@@ -141,7 +141,35 @@ public class Entity : MonoBehaviour
         }
         return false;
     }
-
+    protected bool FindPath(Vector3Int target, List<Vector3Int> AvoidCells)
+    {
+        if (placementSystem == null)
+        {
+            print("placementSystem not set");
+            return false;
+        }
+        else
+        {
+            if (gridData == null)
+            {
+                gridData = placementSystem.furnitureData;
+            }
+            if (placementSystem.furnitureData != null)
+            {
+                if (gridData.IsTileOpen(target))
+                {
+                    //print("target: " + target.ToString());
+                    path = Navagation.FindShortestPath(ref gridData, getIntPos(), target, grid, AvoidCells);
+                    if (path != null && path.Count > 0)
+                    {
+                        currentIndex = path.Count - 1;
+                        return true;
+                    }
+                }
+            }
+        }
+        return false;
+    }
     private void UpdatePos()
     {
         transform.position = grid.CellToWorld(getIntPos()) + posOffset + getFloatOffset();
