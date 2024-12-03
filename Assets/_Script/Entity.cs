@@ -21,8 +21,8 @@ public class Entity : MonoBehaviour
 {
     [SerializeField]
     protected Vector3 pos;
-    [SerializeField]
-    Vector3 posOffset;
+    //[SerializeField]
+    Vector3 posOffset = new Vector3(0.5f, 0, 0.5f);
     [SerializeField]
     Grid grid;
     [SerializeField]
@@ -61,7 +61,7 @@ public class Entity : MonoBehaviour
             print("placementSystem not set");
             return NAVIGATIONSTATUS.ERROR;
         }
-        else if(path != null)
+        else if(path != null && path.Count > 0)
         {
             if (gridData == null)
             {
