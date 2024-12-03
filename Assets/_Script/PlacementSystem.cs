@@ -1,5 +1,7 @@
+using System;
+using System.Collections.Generic;
 using UnityEngine;
-using TMPro;
+
 public class PlacementSystem : MonoBehaviour
 {
     [SerializeField]
@@ -14,7 +16,6 @@ public class PlacementSystem : MonoBehaviour
     private GameObject gridVisualization;
 
     [SerializeField]
-
     public GridData floorData, furnitureData, turretData;
 
     [SerializeField]
@@ -36,9 +37,9 @@ public class PlacementSystem : MonoBehaviour
     private void Start()
     {
         gridVisualization.SetActive(false);
-        floorData = new();
-        furnitureData = new();
-        turretData = new();
+        floorData = new(objectPlacer);
+        furnitureData = new(objectPlacer);
+        turretData = new(objectPlacer);
 
         UpdateUI();
     }
@@ -63,15 +64,22 @@ public class PlacementSystem : MonoBehaviour
     public void StartRemoving()
     {
         StopPlacement();
-        gridVisualization.SetActive(true) ;
-        buildingState = new RemovingState(grid, preview, floorData, furnitureData, turretData, objectPlacer, soundFeedback);
+        gridVisualization.SetActive(true);
+        buildingState = new RemovingState(grid, 
+                                          preview,
+                                          database,
+                                          floorData, 
+                                          furnitureData, 
+                                          turretData, 
+                                          objectPlacer, 
+                                          soundFeedback);
         inputManager.OnClicked += PlaceStructure;
         inputManager.OnExit += StopPlacement;
     }
 
     private void PlaceStructure()
     {
-        if(inputManager.IsPointerOverUI())
+        if (inputManager.IsPointerOverUI())
         {
             return;
         }
@@ -80,15 +88,6 @@ public class PlacementSystem : MonoBehaviour
 
         buildingState.OnAction(gridPosition);
     }
-
-    //private bool CheckPlacementValidity(Vector3Int gridPosition, int selectedObjectIndex)
-    //{
-    //    GridData selectedData = database.objectsData[selectedObjectIndex].ID == 0 ? 
-    //        floorData : 
-    //        furnitureData;
-
-    //    return selectedData.CanPlaceObejctAt(gridPosition, database.objectsData[selectedObjectIndex].Size);
-    //}
 
     private void StopPlacement()
     {
@@ -111,16 +110,18 @@ public class PlacementSystem : MonoBehaviour
 
     private void Update()
     {
-        if (buildingState == null)
-            return;
-        Vector3 mousePosition = inputManager.GetSelectedMapPosition();
-        Vector3Int gridPosition = grid.WorldToCell(mousePosition);
-        if(lastDetectedPosition != gridPosition)
+        if (buildingState != null)
         {
-            buildingState.UpdateState(gridPosition);
-            lastDetectedPosition = gridPosition;
+            Vector3 mousePosition = inputManager.GetSelectedMapPosition();
+            Vector3Int gridPosition = grid.WorldToCell(mousePosition);
+
+            if (lastDetectedPosition != gridPosition)
+            {
+                buildingState.UpdateState(gridPosition);
+                lastDetectedPosition = gridPosition;
+            }
         }
 
-        UpdateUI();   
+        UpdateUI();
     }
 }

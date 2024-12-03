@@ -27,12 +27,12 @@ public class ratingsystem : MonoBehaviour
             if (i < rating)
             {
                 starImages[i].sprite = filledStar;  // Assign filled star sprite
-                Debug.Log($"Star {i}: Filled");
+                //Debug.Log($"Star {i}: Filled");
             }
             else
             {
                 starImages[i].sprite = emptyStar;  // Assign empty star sprite
-                Debug.Log($"Star {i}: Empty");
+                //Debug.Log($"Star {i}: Empty");
             }
         }
     }

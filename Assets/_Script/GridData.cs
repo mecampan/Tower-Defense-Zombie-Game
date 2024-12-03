@@ -5,38 +5,48 @@ using UnityEngine;
 public class GridData
 {
     Dictionary<Vector3Int, PlacementData> placedObjects = new();
+    private ObjectPlacer objectPlacer;
+    public GridData(ObjectPlacer objectPlacer)
+    {
+        this.objectPlacer = objectPlacer;
+    }
+    private int turretCount = 10;
+    private int furnitureCount = 20;
 
-    private int turretCount = 8;
-    private int furnitureCount = 12;
+    private readonly int[] FloorID = { 0 };
+    private readonly int[] FurnitureID= { 1, 2, 3, 4, 5 };
+    private readonly int[] TurretID = { 6 };
 
     public int GetTurretCount() => turretCount;
     public int GetFurnitureCount() => furnitureCount;
 
     public void AddObjectAt(Vector3Int gridPosition,
-                            Vector2Int objectSize,
-                            int ID,
-                            int placedObjectIndex)
-    {
-        // Ensure valid placement based on ID
-        if (ID >= 5 && turretCount <= 0)
-            throw new Exception("No turrets remaining to place.");
-        if (ID >= 1 && ID <= 4 && furnitureCount <= 0)
-            throw new Exception("No furniture remaining to place.");
-
-        List<Vector3Int> positionToOccupy = CalculatePositions(gridPosition, objectSize);
-        PlacementData data = new PlacementData(positionToOccupy, ID, placedObjectIndex);
-        foreach (var pos in positionToOccupy)
+                                Vector2Int objectSize,
+                                int ID,
+                                int placedObjectIndex)
         {
-            if (placedObjects.ContainsKey(pos))
-                throw new Exception($"Dictionary already contains this cell position {pos}");
-            placedObjects[pos] = data;
-        }
+            // Validate placement based on ID
+            if (IsTurretID(ID) && turretCount <= 0)
+                throw new Exception("No turrets remaining to place.");
+            if (IsFurnitureID(ID) && furnitureCount <= 0)
+                throw new Exception("No furniture remaining to place.");
 
-        if (ID >= 5) 
-            turretCount--;
-        else if (ID >= 1 && ID <= 4) 
-            furnitureCount--;
-    }
+            List<Vector3Int> positionToOccupy = CalculatePositions(gridPosition, objectSize);
+            PlacementData data = new PlacementData(positionToOccupy, ID, placedObjectIndex);
+
+            foreach (var pos in positionToOccupy)
+            {
+                if (placedObjects.ContainsKey(pos))
+                    throw new Exception($"Dictionary already contains this cell position {pos}");
+                placedObjects[pos] = data;
+            }
+
+            // Update counters
+            if (IsTurretID(ID))
+                turretCount--;
+            else if (IsFurnitureID(ID))
+                furnitureCount--;
+        }
 
     private List<Vector3Int> CalculatePositions(Vector3Int gridPosition, Vector2Int objectSize)
     {
@@ -78,11 +88,8 @@ public class GridData
 
     public bool IsTileOpen(Vector3Int gridPosition)
     {
-
-        // Calculate all grid positions the object will occupy
         List<Vector3Int> positionsToOccupy = CalculatePositions(gridPosition, new Vector2Int(1, 1));
 
-        // Check if the position is already occupied
         if (placedObjects.ContainsKey(gridPosition) && (gridPosition.x <= 5 && gridPosition.x >= -5 && gridPosition.z <= 5 && gridPosition.z >= -5))
         {
             return false;
@@ -110,38 +117,10 @@ public class GridData
                 placedObjects.Remove(pos);
         }
 
-        if (data.ID >= 5) 
+        if (IsTurretID(data.ID))
             turretCount++;
-        else if (data.ID >= 1 && data.ID <= 4) 
+        else if (IsFurnitureID(data.ID))
             furnitureCount++;
-    }
-
-    public void RemoveUnsupportedTurrets(GridData furnitureData, GridData turretData, ObjectPlacer objectPlacer)
-    {
-        List<Vector3Int> unsupportedTurrets = new();
-
-        // Iterate over all turrets
-        foreach (var turretEntry in turretData.GetAllPlacedObjects())
-        {
-            Vector3Int turretPosition = turretEntry.Key;
-
-            // Check if there is no furniture at the same position
-            if (!furnitureData.HasObjectAt(turretPosition))
-            {
-                unsupportedTurrets.Add(turretPosition);
-            }
-        }
-
-        // Remove unsupported turrets
-        foreach (var position in unsupportedTurrets)
-        {
-            int index = turretData.GetRepresentationIndex(position);
-            if (index != -1)
-            {
-                turretData.RemoveObjectAt(position);
-                objectPlacer.RemoveObjectAt(index);
-            }
-        }
     }
 
     public bool HasObjectAt(Vector3Int gridPosition)
@@ -152,6 +131,24 @@ public class GridData
     public Dictionary<Vector3Int, PlacementData> GetAllPlacedObjects()
     {
         return placedObjects;
+    }
+
+    private bool IsFloorID(int ID) {return Array.Exists(FloorID, floorID => floorID == ID); }
+    private bool IsFurnitureID(int ID) {return Array.Exists(FurnitureID, furnitureID => furnitureID == ID); }
+    private bool IsTurretID(int ID) {return Array.Exists(TurretID, turretID => turretID == ID); }
+
+    public void ClearAllObjects()
+    {
+        List<Vector3Int> positionsToClear = new List<Vector3Int>(placedObjects.Keys);
+        foreach (var position in positionsToClear)
+        {
+            int index = GetRepresentationIndex(position);
+            if (index != -1)
+            {
+                placedObjects.Remove(position);
+                objectPlacer.RemoveObjectAt(index); // Ensures visual removal
+            }
+        }
     }
 }
 

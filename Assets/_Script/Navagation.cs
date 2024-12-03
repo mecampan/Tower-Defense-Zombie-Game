@@ -11,22 +11,27 @@ public class Navagation : MonoBehaviour
 {
     public static List<Vector3Int> FindShortestPath(ref GridData data, Vector3Int Start, Vector3Int End, Grid grid)
     {
-        int CalcCount = 0;
+        if (data == null)
+        {
+            Debug.LogError("GridData is null in FindShortestPath.");
+            return new List<Vector3Int>();
+        }
+
         List<Vector3Int> outArray = new List<Vector3Int> { };
         if (Start.Equals(End))
         {
-            //print("CalcCount1: " + CalcCount);
             return outArray;
         }
 
         Dictionary<Vector3Int, TileData> SearchedTiles = new();
-
-        List<Vector3Int> tileQueue = new List<Vector3Int> {End};
+        List<Vector3Int> tileQueue = new List<Vector3Int> { End };
 
         {
-            TileData tileData = new TileData();
-            tileData.pos = End;
-            tileData.num = 0;
+            TileData tileData = new TileData
+            {
+                pos = End,
+                num = 0
+            };
             SearchedTiles.Add(End, tileData);
         }
 
@@ -34,9 +39,8 @@ public class Navagation : MonoBehaviour
 
         for (int i = 0; i < 500; i++)
         {
-            //print("int1: " + i);
             count++;
-            List<Vector3Int> tmpTileQueue = new List<Vector3Int> { };
+            List<Vector3Int> tmpTileQueue = new List<Vector3Int>();
             foreach (Vector3Int tile in tileQueue)
             {
                 List<Vector3Int> tmpList = getNearbyWalkableTiles(ref data, ref SearchedTiles, tile);
@@ -44,40 +48,35 @@ public class Navagation : MonoBehaviour
                 {
                     tmpTileQueue.Add(tmpTile);
 
-                    TileData tileData = new TileData();
-                    tileData.pos = tmpTile;
-                    tileData.num = count;
+                    TileData tileData = new TileData
+                    {
+                        pos = tmpTile,
+                        num = count
+                    };
                     SearchedTiles.Add(tmpTile, tileData);
                 }
             }
             tileQueue.Clear();
-            foreach(Vector3Int tile in tmpTileQueue)
-            {
-                tileQueue.Add(tile);
-            }
-            if(tileQueue.Count == 0)
+            tileQueue.AddRange(tmpTileQueue);
+            if (tileQueue.Count == 0)
             {
                 break;
             }
         }
 
-        TileData currentTile = new TileData();
-        if(!SearchedTiles.TryGetValue(Start, out currentTile))
+        if (!SearchedTiles.TryGetValue(Start, out TileData currentTile))
         {
-            //print("CalcCount1: " + CalcCount);
             return outArray;
         }
-        //print("CalcCount1: " + CalcCount);
+
         for (int i = 0; i < 500; i++)
         {
-            //print("int2: " + i);
-            TileData minTile = new TileData();
-            minTile.num = 999999;
+            TileData minTile = new TileData { num = 999999 };
             bool bFoundTile = false;
             foreach (Vector3Int tmpTile in getNearbyTracedTiles(ref data, ref SearchedTiles, currentTile.pos))
             {
-                TileData tmpNum = new TileData();
-                if(SearchedTiles.TryGetValue(tmpTile, out tmpNum)){
+                if (SearchedTiles.TryGetValue(tmpTile, out TileData tmpNum))
+                {
                     if (tmpNum.num < minTile.num)
                     {
                         minTile = tmpNum;
@@ -95,11 +94,11 @@ public class Navagation : MonoBehaviour
                 break;
             }
         }
-        //print("CalcCount2: " + CalcCount);
         outArray.Add(End);
         outArray.Reverse();
         return outArray;
     }
+
     private static List<Vector3Int> getNearbyWalkableTiles(ref GridData data, ref Dictionary<Vector3Int, TileData> SearchedTiles, Vector3Int tile)
     {
         List<Vector3Int> outArray = new List<Vector3Int>();
