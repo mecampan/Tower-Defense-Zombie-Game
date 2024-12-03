@@ -3864,13 +3864,12 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   customerPrefab: {fileID: 4197744128389484957, guid: 60b08540c02c8c542a56ddd0568680b6,
     type: 3}
-  entryPoint: {x: 0, y: 0, z: -5}
-  exitPoint: {x: 0, y: 0, z: -5}
   shelves: []
   spawnInterval: 2
   customerSpeed: 2
   shelfWaitTime: 3
   grid: {fileID: 534376281}
+  placementSystem: {fileID: 1369282340}
 --- !u!1 &1871086870
 GameObject:
   m_ObjectHideFlags: 0

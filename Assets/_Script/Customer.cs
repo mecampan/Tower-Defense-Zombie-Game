@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.IO;
@@ -24,24 +25,25 @@ public class Customer : Entity
         StartCoroutine(PerformShopping());
     }
 
-    //public void Setup(List<Vector3Int> shelves, Vector3Int exit, float speed, float wait)
-    //{
-    //    // Generate a random shopping list from available shelves
-    //    int itemsToBuy = Random.Range(1, shelves.Count + 1); // 1 to all shelves
-    //    shoppingList = new List<Vector3Int>(shelves);
-    //    for (int i = shelves.Count - 1; i >= itemsToBuy; i--)
-    //    {
-    //        shoppingList.RemoveAt(Random.Range(0, shoppingList.Count));
-    //    }
+    /*
+    public void Setup(List<Vector3Int> shelves, Vector3Int exit, float speed, float wait)
+    {
+        // Generate a random shopping list from available shelves
+        int itemsToBuy = UnityEngine.Random.Range(1, shelves.Count + 1); // 1 to all shelves
+        shoppingList = new List<Vector3Int>(shelves);
+        for (int i = shelves.Count - 1; i >= itemsToBuy; i--)
+        {
+            shoppingList.RemoveAt(UnityEngine.Random.Range(0, shoppingList.Count));
+        }
 
-    //    exitPoint = exit;
-    //    moveSpeed = speed;
-    //    waitTime = wait;
+        exitPoint = exit;
+        moveSpeed = speed;
+        waitTime = wait;
 
-    //    // Start moving toward the first shelf
-    //    StartCoroutine(PerformShopping());
-    //}
-
+        // Start moving toward the first shelf
+        StartCoroutine(PerformShopping());
+    }
+    */
     private IEnumerator PerformShopping()
     {
         while (currentTargetIndex < shoppingList.Count)
@@ -143,5 +145,10 @@ public class Customer : Entity
         }
 
         Destroy(gameObject);
+    }
+
+    internal void SetPlacementSystem(PlacementSystem placementSystem)
+    {
+        this.placementSystem = placementSystem;
     }
 }
