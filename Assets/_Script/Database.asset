@@ -21,27 +21,27 @@ MonoBehaviour:
   - <Name>k__BackingField: Grain
     <ID>k__BackingField: 1
     <Size>k__BackingField: {x: 1, y: 1}
-    <Prefab>k__BackingField: {fileID: 1836978663843124220, guid: 096c00599703ee24c82289b21ed5110b,
-      type: 3}
-  - <Name>k__BackingField: Meat
-    <ID>k__BackingField: 2
-    <Size>k__BackingField: {x: 1, y: 1}
-    <Prefab>k__BackingField: {fileID: 1836978663843124220, guid: 096c00599703ee24c82289b21ed5110b,
+    <Prefab>k__BackingField: {fileID: 3618176326839258033, guid: 2b7bf4bad4f35b74fa6ee8326e693a01,
       type: 3}
   - <Name>k__BackingField: Dairy
+    <ID>k__BackingField: 2
+    <Size>k__BackingField: {x: 1, y: 1}
+    <Prefab>k__BackingField: {fileID: 686892926607498215, guid: efa8d2e8ad2bfad40ad2f82f9f71f991,
+      type: 3}
+  - <Name>k__BackingField: Meat
     <ID>k__BackingField: 3
     <Size>k__BackingField: {x: 1, y: 1}
-    <Prefab>k__BackingField: {fileID: 1836978663843124220, guid: 096c00599703ee24c82289b21ed5110b,
+    <Prefab>k__BackingField: {fileID: 7885215410763393171, guid: b3a12a830885ad7449ad676ba70ae873,
       type: 3}
   - <Name>k__BackingField: Fruit
     <ID>k__BackingField: 4
     <Size>k__BackingField: {x: 1, y: 1}
-    <Prefab>k__BackingField: {fileID: 1836978663843124220, guid: 096c00599703ee24c82289b21ed5110b,
+    <Prefab>k__BackingField: {fileID: 4758283762139171913, guid: 9f3d9f92d7bbe5e40ba5c168d0132420,
       type: 3}
   - <Name>k__BackingField: Vegetable
     <ID>k__BackingField: 5
     <Size>k__BackingField: {x: 1, y: 1}
-    <Prefab>k__BackingField: {fileID: 1836978663843124220, guid: 096c00599703ee24c82289b21ed5110b,
+    <Prefab>k__BackingField: {fileID: 8692522343795614921, guid: 15eaa8ef63d564e4b9fb05b326166091,
       type: 3}
   - <Name>k__BackingField: Turret
     <ID>k__BackingField: 6
