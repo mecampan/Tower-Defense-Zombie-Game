@@ -9,6 +9,14 @@ using UnityEngine;
 using UnityEngine.Rendering;
 using UnityEngine.UI;
 
+public enum NAVIGATIONSTATUS
+{
+    ERROR = 0,
+    BETWEENTILES = 1,
+    ATTILE = 2,
+    FINISHED = 3
+}
+
 public class Entity : MonoBehaviour
 {
     [SerializeField]
@@ -18,12 +26,12 @@ public class Entity : MonoBehaviour
     [SerializeField]
     Grid grid;
     [SerializeField]
-    PlacementSystem placementSystem;
+    protected PlacementSystem placementSystem;
     protected List<Vector3Int> path = null;
-    GridData gridData = null;
+    protected GridData gridData = null;
     int currentIndex = 0;
-    const int timer = 100;
-    int CurrentTime = timer;
+    protected const int timer = 100;
+    protected int CurrentTime = timer;
 
     protected float moveSpeed;
     protected float waitTime = 0.003f;
@@ -32,20 +40,26 @@ public class Entity : MonoBehaviour
     {
     }
 
-    Vector3Int getIntPos()
+    public Vector3 getPos()
+    {
+        return pos;
+    }
+
+    public Vector3Int getIntPos()
     {
         return new Vector3Int(Mathf.FloorToInt(pos.x), 0, Mathf.FloorToInt(pos.z));
     }
-    Vector3 getFloatOffset()
+    public Vector3 getFloatOffset()
     {
         return new Vector3((pos.x - Mathf.Floor(pos.x)) * grid.cellSize.x, 0, (pos.z - Mathf.Floor(pos.z)) * grid.cellSize.z);
     }
-    protected int NavigatePath()
+
+    protected NAVIGATIONSTATUS NavigatePath()
     {
         if (placementSystem == null)
         {
             print("placementSystem not set");
-            return 0;
+            return NAVIGATIONSTATUS.ERROR;
         }
         else if(path != null)
         {
@@ -66,7 +80,11 @@ public class Entity : MonoBehaviour
                     }
                     if (currentIndex <= 0)
                     {
-                        return 2;
+                        return NAVIGATIONSTATUS.FINISHED;
+                    }
+                    if (currentIndex >= 0)
+                    {
+                        return NAVIGATIONSTATUS.ATTILE;
                     }
                 }
                 else if (path != null && CurrentTime > 0)
@@ -81,17 +99,17 @@ public class Entity : MonoBehaviour
                 }
                 else
                 {
-                    return 0;
+                    return NAVIGATIONSTATUS.ERROR;
                 }
             }
             else
             {
-                return 0;
+                return NAVIGATIONSTATUS.ERROR;
             }
             UpdatePos();
-            return 1;
+            return NAVIGATIONSTATUS.BETWEENTILES;
         }
-        return 0;
+        return NAVIGATIONSTATUS.ERROR;
     }
 
     protected bool FindPath(Vector3Int target)

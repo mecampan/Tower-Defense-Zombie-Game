@@ -54,8 +54,8 @@ public class Customer : Entity
             }
             else
             {
-                int tmp = NavigatePath();
-                if (tmp == 0 || tmp == 2)
+                NAVIGATIONSTATUS tmp = NavigatePath();
+                if (tmp == NAVIGATIONSTATUS.ERROR || tmp == NAVIGATIONSTATUS.FINISHED)
                 {
                     Vector3Int targetShelf = shoppingList[currentTargetIndex];
                     print("reached shelf: " + targetShelf.ToString());
@@ -74,8 +74,8 @@ public class Customer : Entity
             }
             else
             {
-                int tmp = NavigatePath();
-                if (tmp == 0 || tmp == 2)
+                NAVIGATIONSTATUS tmp = NavigatePath();
+                if (tmp == NAVIGATIONSTATUS.ERROR || tmp == NAVIGATIONSTATUS.FINISHED)
                 {
                     if (pos.Equals(exitPoint))
                     {
