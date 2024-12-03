@@ -18,28 +18,33 @@ MonoBehaviour:
     <Size>k__BackingField: {x: 1, y: 1}
     <Prefab>k__BackingField: {fileID: 175886647813805099, guid: 6bafb9556d35ba840bebea4eea7d34c2,
       type: 3}
-  - <Name>k__BackingField: Chair
+  - <Name>k__BackingField: Grain
     <ID>k__BackingField: 1
     <Size>k__BackingField: {x: 1, y: 1}
-    <Prefab>k__BackingField: {fileID: 4428052050468720457, guid: e033e50487fb016449143cd70d837387,
+    <Prefab>k__BackingField: {fileID: 1836978663843124220, guid: 096c00599703ee24c82289b21ed5110b,
       type: 3}
-  - <Name>k__BackingField: Big Bed
+  - <Name>k__BackingField: Meat
     <ID>k__BackingField: 2
-    <Size>k__BackingField: {x: 2, y: 2}
-    <Prefab>k__BackingField: {fileID: 3487007735555770654, guid: 4721f1b576334dc46b3c72470bf613e3,
+    <Size>k__BackingField: {x: 1, y: 1}
+    <Prefab>k__BackingField: {fileID: 1836978663843124220, guid: 096c00599703ee24c82289b21ed5110b,
       type: 3}
-  - <Name>k__BackingField: Table
+  - <Name>k__BackingField: Dairy
     <ID>k__BackingField: 3
-    <Size>k__BackingField: {x: 2, y: 2}
-    <Prefab>k__BackingField: {fileID: 3493615974341626966, guid: c8183485a28237d4385a3c7ef8659faa,
+    <Size>k__BackingField: {x: 1, y: 1}
+    <Prefab>k__BackingField: {fileID: 1836978663843124220, guid: 096c00599703ee24c82289b21ed5110b,
       type: 3}
-  - <Name>k__BackingField: StoreShelf
+  - <Name>k__BackingField: Fruit
     <ID>k__BackingField: 4
-    <Size>k__BackingField: {x: 2, y: 1}
-    <Prefab>k__BackingField: {fileID: 1745688935541083005, guid: 8062c13aed274af41a84d63ecfc29542,
+    <Size>k__BackingField: {x: 1, y: 1}
+    <Prefab>k__BackingField: {fileID: 1836978663843124220, guid: 096c00599703ee24c82289b21ed5110b,
       type: 3}
-  - <Name>k__BackingField: Turret
+  - <Name>k__BackingField: Vegetable
     <ID>k__BackingField: 5
     <Size>k__BackingField: {x: 1, y: 1}
-    <Prefab>k__BackingField: {fileID: 3828425284428230941, guid: d8f5a1fdedd9a484e9a7258584701b20,
+    <Prefab>k__BackingField: {fileID: 1836978663843124220, guid: 096c00599703ee24c82289b21ed5110b,
+      type: 3}
+  - <Name>k__BackingField: Turret
+    <ID>k__BackingField: 6
+    <Size>k__BackingField: {x: 1, y: 1}
+    <Prefab>k__BackingField: {fileID: 300979180065845542, guid: e872ce0a5026f4a278de6384e65237f3,
       type: 3}

@@ -89,7 +89,7 @@ public class PlacementSystem : MonoBehaviour
         buildingState.OnAction(gridPosition);
     }
 
-    private void StopPlacement()
+    public void StopPlacement()
     {
         soundFeedback.PlaySound(SoundType.Click);
         if (buildingState == null)
