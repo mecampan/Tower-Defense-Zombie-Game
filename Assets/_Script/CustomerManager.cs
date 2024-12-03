@@ -7,8 +7,8 @@ public class CustomerManager : MonoBehaviour
     [SerializeField]
     [Header("Customer Settings")]
     public GameObject customerPrefab;
-    [SerializeField]
-    private Vector3Int entryPoint, exitPoint; // The entry and exit point after shopping
+    private Vector3Int entryPoint = new Vector3Int(0, 0, -5);
+    private Vector3Int exitPoint = new Vector3Int(0, 0, -5);
     [SerializeField]
     public List<Vector3Int> shelves; // List of shelf locations
     public float spawnInterval = 2f; // Time between customer spawns
@@ -17,13 +17,22 @@ public class CustomerManager : MonoBehaviour
     public float shelfWaitTime = 3f; // Time customers wait at each shelf
     [SerializeField]
     Grid grid;
+    [SerializeField]
+    private PlacementSystem placementSystem;
+
+    private int MaxCustomersInStore = 10;
+    private int CurrentCustomersInStore = 0;
+    private int MaxCustomersToBeSpawned = 30;
+    private int CurrentCustomersSpawned = 0;
     private IEnumerator SpawnCustomers()
     {
-        while (true)
+        while (CurrentCustomersSpawned < MaxCustomersToBeSpawned)
         {
-            if (entryPoint != null)
+            if (entryPoint != null && CurrentCustomersInStore < MaxCustomersInStore)
             {
+                Debug.Log("Spawning Customer at entry point");
                 SpawnCustomer();
+                CurrentCustomersInStore++;
             }
             yield return new WaitForSeconds(spawnInterval);
         }
@@ -31,14 +40,19 @@ public class CustomerManager : MonoBehaviour
     private void SpawnCustomer()
     {
         // Create a new customer and set up their shopping routine
+        //GameObject customer = Instantiate(customerPrefab, grid.CellToWorld(entryPoint), Quaternion.identity);
+        //Customer customerEntity = customer.AddComponent<Customer>();
+        //customerEntity.Setup(shelves, exitPoint, customerSpeed, shelfWaitTime);
         GameObject customer = Instantiate(customerPrefab, grid.CellToWorld(entryPoint), Quaternion.identity);
         Customer customerEntity = customer.AddComponent<Customer>();
-        //customerEntity.Setup(shelves, exitPoint, customerSpeed, shelfWaitTime);
+        customerEntity.placementSystem = placementSystem; // Pass placementSystem
+
     }
 
     public void BeginCustomerSpawner()
     {
-        SpawnCustomers();
+        Debug.Log("Starting Customer Spawner");
+        StartCoroutine(SpawnCustomers()); // Start the coroutine properly
     }
 }
 //public class CustomerManager : MonoBehaviour
