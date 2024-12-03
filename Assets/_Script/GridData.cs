@@ -21,32 +21,41 @@ public class GridData
     public int GetFurnitureCount() => furnitureCount;
 
     public void AddObjectAt(Vector3Int gridPosition,
-                                Vector2Int objectSize,
-                                int ID,
-                                int placedObjectIndex)
+                            Vector2Int objectSize,
+                            int ID,
+                            int placedObjectIndex)
+    {
+        // Validate placement based on ID
+        if (IsTurretID(ID) && turretCount <= 0)
+            throw new Exception("No turrets remaining to place.");
+        if (IsFurnitureID(ID) && furnitureCount <= 0)
+            throw new Exception("No furniture remaining to place.");
+
+        List<Vector3Int> positionToOccupy = CalculatePositions(gridPosition, objectSize);
+        
+        // Iterate through the positions to be occupied
+        foreach (var pos in positionToOccupy)
         {
-            // Validate placement based on ID
-            if (IsTurretID(ID) && turretCount <= 0)
-                throw new Exception("No turrets remaining to place.");
-            if (IsFurnitureID(ID) && furnitureCount <= 0)
-                throw new Exception("No furniture remaining to place.");
-
-            List<Vector3Int> positionToOccupy = CalculatePositions(gridPosition, objectSize);
-            PlacementData data = new PlacementData(positionToOccupy, ID, placedObjectIndex);
-
-            foreach (var pos in positionToOccupy)
+            if (placedObjects.TryGetValue(pos, out var existingData))
             {
-                if (placedObjects.ContainsKey(pos))
-                    throw new Exception($"Dictionary already contains this cell position {pos}");
+                // Add the ID to the existing PlacementData
+                existingData.AddID(ID);
+            }
+            else
+            {
+                // Create new PlacementData if the position isn't already occupied
+                PlacementData data = new PlacementData(positionToOccupy, ID, placedObjectIndex);
                 placedObjects[pos] = data;
             }
-
-            // Update counters
-            if (IsTurretID(ID))
-                turretCount--;
-            else if (IsFurnitureID(ID))
-                furnitureCount--;
         }
+
+        // Update counters
+        if (IsTurretID(ID))
+            turretCount--;
+        else if (IsFurnitureID(ID))
+            furnitureCount--;
+    }
+
 
     private List<Vector3Int> CalculatePositions(Vector3Int gridPosition, Vector2Int objectSize)
     {
@@ -105,23 +114,32 @@ public class GridData
         return placedObjects[gridPosition].PlacedObjectIndex;
     }
 
-    public void RemoveObjectAt(Vector3Int gridPosition)
+    public void RemoveObjectAt(Vector3Int gridPosition, int ID)
     {
         if (!placedObjects.ContainsKey(gridPosition)) return;
 
         PlacementData data = placedObjects[gridPosition];
 
-        foreach (var pos in data.occupiedPositions)
+        // Remove the specified ID from this PlacementData
+        data.RemoveID(ID);
+
+        // If no IDs remain in the PlacementData, remove the entire entry
+        if (data.IDs.Count == 0)
         {
-            if (placedObjects.ContainsKey(pos))
-                placedObjects.Remove(pos);
+            foreach (var pos in data.occupiedPositions)
+            {
+                if (placedObjects.ContainsKey(pos))
+                    placedObjects.Remove(pos);
+            }
         }
 
-        if (IsTurretID(data.ID))
+        // Update counters based on the removed ID
+        if (IsTurretID(ID))
             turretCount++;
-        else if (IsFurnitureID(data.ID))
+        else if (IsFurnitureID(ID))
             furnitureCount++;
     }
+
 
     public bool HasObjectAt(Vector3Int gridPosition)
     {
@@ -155,13 +173,23 @@ public class GridData
 public class PlacementData
 {
     public List<Vector3Int> occupiedPositions;
-    public int ID { get; private set; }
+    public HashSet<int> IDs { get; private set; } // Allow multiple IDs
     public int PlacedObjectIndex { get; private set; }
 
-    public PlacementData(List<Vector3Int> occupiedPositions, int iD, int placedObjectIndex)
+    public PlacementData(List<Vector3Int> occupiedPositions, int initialID, int placedObjectIndex)
     {
         this.occupiedPositions = occupiedPositions;
-        ID = iD;
+        this.IDs = new HashSet<int> { initialID };
         PlacedObjectIndex = placedObjectIndex;
+    }
+
+    public void AddID(int id)
+    {
+        IDs.Add(id);
+    }
+
+    public void RemoveID(int id)
+    {
+        IDs.Remove(id);
     }
 }

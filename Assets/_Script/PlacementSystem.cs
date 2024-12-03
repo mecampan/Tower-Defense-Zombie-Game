@@ -124,4 +124,29 @@ public class PlacementSystem : MonoBehaviour
 
         UpdateUI();
     }
+
+    public void GetAllPlacedObjects()
+    {
+        Debug.Log("Floor Data:");
+        LogPlacedObjects(floorData.GetAllPlacedObjects());
+
+        Debug.Log("Furniture Data:");
+        LogPlacedObjects(furnitureData.GetAllPlacedObjects());
+
+        Debug.Log("Turret Data:");
+        LogPlacedObjects(turretData.GetAllPlacedObjects());
+    }
+
+    private void LogPlacedObjects(Dictionary<Vector3Int, PlacementData> placedObjects)
+    {
+        foreach (var entry in placedObjects)
+        {
+            Vector3Int position = entry.Key;
+            PlacementData data = entry.Value;
+
+            string ids = string.Join(", ", data.IDs); // Convert IDs to a comma-separated string
+            Debug.Log($"Position: {position}, IDs: [{ids}], PlacedObjectIndex: {data.PlacedObjectIndex}");
+        }
+    }
+
 }

@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 public class RemovingState : IBuildingState
@@ -60,6 +61,14 @@ public class RemovingState : IBuildingState
             return;
         }
 
+        // Get the ID of the object to remove
+        int objectID = selectedData.GetAllPlacedObjects()[gridPosition].IDs.FirstOrDefault();
+        if (objectID == 0)
+        {
+            Debug.LogWarning($"No valid ID found for object at position {gridPosition}.");
+            return;
+        }
+
         gameObjectIndex = selectedData.GetRepresentationIndex(gridPosition);
         if (gameObjectIndex == -1)
         {
@@ -68,7 +77,7 @@ public class RemovingState : IBuildingState
         }
 
         soundFeedback.PlaySound(SoundType.Remove);
-        selectedData.RemoveObjectAt(gridPosition);
+        selectedData.RemoveObjectAt(gridPosition, objectID); // Pass the specific ID
         objectPlacer.RemoveObjectAt(gameObjectIndex);
 
         Vector3 cellPosition = grid.CellToWorld(gridPosition);
@@ -76,6 +85,7 @@ public class RemovingState : IBuildingState
 
         PlaceSurroundingFloorTiles();
     }
+
 
 
     private bool CheckIfSelectionIsValid(Vector3Int gridPosition)
@@ -100,18 +110,29 @@ public class RemovingState : IBuildingState
             // Calculate adjacent positions for this furniture piece
             List<Vector3Int> adjacentPositions = GetAdjacentPositions(furnitureDataEntry.occupiedPositions);
 
-
             // Place floor tiles only in valid positions
             foreach (var position in adjacentPositions)
             {
-                if (!furnitureData.HasObjectAt(position) && !floorData.HasObjectAt(position))
+                if (!furnitureData.HasObjectAt(position))
                 {
-                    // Use ID 0 for floor tiles
-                    floorData.AddObjectAt(position, Vector2Int.one, 0, objectPlacer.PlaceObject(database.objectsData[0].Prefab, grid.CellToWorld(position)));
+                    // Check if the tile already exists in the floorData
+                    if (floorData.HasObjectAt(position))
+                    {
+                        // Add the furniture ID to the existing floor tile
+                        floorData.GetAllPlacedObjects()[position].AddID(furnitureDataEntry.IDs.First());
+                    }
+                    else
+                    {
+                        // Place a new floor tile and add the furniture ID
+                        int index = objectPlacer.PlaceObject(database.objectsData[0].Prefab, grid.CellToWorld(position));
+                        floorData.AddObjectAt(position, Vector2Int.one, 0, index);
+                        floorData.GetAllPlacedObjects()[position].AddID(furnitureDataEntry.IDs.First());
+                    }
                 }
             }
         }
     }
+
 
     private List<Vector3Int> GetAdjacentPositions(List<Vector3Int> occupiedPositions)
     {
