@@ -41,10 +41,14 @@ MonoBehaviour:
   - <Name>k__BackingField: Vegetable
     <ID>k__BackingField: 5
     <Size>k__BackingField: {x: 1, y: 1}
+<<<<<<< HEAD
+    <Prefab>k__BackingField: {fileID: 939335178, guid: 29f393efdc386ee41aee6077912722cf,
+=======
     <Prefab>k__BackingField: {fileID: 8692522343795614921, guid: 15eaa8ef63d564e4b9fb05b326166091,
       type: 3}
   - <Name>k__BackingField: Turret
     <ID>k__BackingField: 6
     <Size>k__BackingField: {x: 1, y: 1}
     <Prefab>k__BackingField: {fileID: 2749410602093348352, guid: de6d6089278c8482a89fe1de7f135e59,
+>>>>>>> b24ec1d6f49c24d8d284364b72fe5196f391c690
       type: 3}
