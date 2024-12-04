@@ -3758,8 +3758,8 @@ MonoBehaviour:
     type: 3}
   shelves: []
   spawnInterval: 2
-  customerSpeed: 2
-  shelfWaitTime: 3
+  customerSpeed: 3
+  shelfWaitTime: 0.01
   grid: {fileID: 534376281}
   placementSystem: {fileID: 1369282340}
 --- !u!1 &1871086870

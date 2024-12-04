@@ -22,9 +22,9 @@ public class Entity : MonoBehaviour
     [SerializeField]
     protected Vector3 pos;
     //[SerializeField]
-    Vector3 posOffset = new Vector3(0.5f, 0, 0.5f);
+    Vector3 posOffset = new Vector3(0.0f, 0, 0.0f);
     [SerializeField]
-    Grid grid;
+    protected Grid grid;
     [SerializeField]
     protected PlacementSystem placementSystem;
     protected List<Vector3Int> path = null;

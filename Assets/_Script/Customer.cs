@@ -15,26 +15,80 @@ public class Customer : Entity
     [Header("Customer Testing")]
     private Vector3Int exitPoint;
     private int currentTargetIndex = 0;
-    [SerializeField]
-    [Header("Customer Testing")]
-    private bool bShopping = false;
 
 
-    private void Start()
+    public void StartCustomer()
     {
         StartCoroutine(PerformShopping());
     }
 
-    /*
-    public void Setup(List<Vector3Int> shelves, Vector3Int exit, float speed, float wait)
+    
+    public void Setup(Vector3Int exit, float speed, float wait, ref Grid InputGrid, ref PlacementSystem inputPlacementSystem)
     {
-        // Generate a random shopping list from available shelves
-        int itemsToBuy = UnityEngine.Random.Range(1, shelves.Count + 1); // 1 to all shelves
-        shoppingList = new List<Vector3Int>(shelves);
-        for (int i = shelves.Count - 1; i >= itemsToBuy; i--)
+        grid = InputGrid;
+        placementSystem = inputPlacementSystem;
+
+        
+        GridData floorData = placementSystem.floorData;
+        Dictionary<Vector3Int, PlacementData> placedObjects = floorData.GetAllPlacedObjects();
+
+
+        Dictionary<int, List<Vector3Int>> storedTiles = new Dictionary<int, List<Vector3Int>>();
+        foreach (var entry in placedObjects)
         {
-            shoppingList.RemoveAt(UnityEngine.Random.Range(0, shoppingList.Count));
+            Vector3Int position = entry.Key;
+            PlacementData data = entry.Value;
+
+            HashSet<int> ids = data.IDs;
+
+            foreach(int id in ids){
+                if(storedTiles.ContainsKey(id)){
+                    List<Vector3Int> outList;
+                    storedTiles.TryGetValue(id, out outList);
+                    if(outList != null){
+                        outList.Add(position);
+                    }
+                    else{
+                        outList = new List<Vector3Int>() {position};
+                    }
+                }
+                else {
+                    storedTiles.Add(id, new List<Vector3Int>() {position});
+                }
+            }
+
+            //string ids = string.Join(", ", data.IDs); // Convert IDs to a comma-separated string
+
+            //Debug.Log($"Position: {position}, IDs: [{ids}], PlacedObjectIndex: {data.PlacedObjectIndex}");
         }
+
+        List<int> itemList = new List<int>();
+
+        int numItems = UnityEngine.Random.Range(1, 5);
+
+        for(int i = 0; i < numItems; i++){
+            itemList.Add(UnityEngine.Random.Range(1, 6));
+        }
+
+        shoppingList = new List<Vector3Int>();
+    
+        foreach(int item in itemList){
+            List<Vector3Int> tmpTiles;
+            storedTiles.TryGetValue(item, out tmpTiles);
+            int tmpIndex = UnityEngine.Random.Range(0, tmpTiles.Count);
+            shoppingList.Add(tmpTiles[tmpIndex]);
+        }
+
+        print("shoppingListLen: " + shoppingList.Count);
+
+        // Generate a random shopping list from available shelves
+        // int itemsToBuy = UnityEngine.Random.Range(1, shelves.Count + 1); // 1 to all shelves
+        //shoppingList = new List<Vector3Int>(shelves);
+        // for (int i = shelves.Count - 1; i >= itemsToBuy; i--)
+        // {
+        //     shoppingList.RemoveAt(UnityEngine.Random.Range(0, shoppingList.Count));
+        // }
+
 
         exitPoint = exit;
         moveSpeed = speed;
@@ -43,18 +97,21 @@ public class Customer : Entity
         // Start moving toward the first shelf
         StartCoroutine(PerformShopping());
     }
-    */
+    
     private IEnumerator PerformShopping()
     {
         while (currentTargetIndex < shoppingList.Count)
         {
+            print("shopping");
             if (path == null)
             {
+                print("finding path");
                 Vector3Int targetShelf = shoppingList[currentTargetIndex];
                 if (FindPath(targetShelf));
                 {
-                    //print("found new shelf: " + targetShelf.ToString());
+                    print("found new shelf: " + targetShelf.ToString());
                 }
+
             }
             else
             {
@@ -62,6 +119,7 @@ public class Customer : Entity
                 NAVIGATIONSTATUS tmp = NavigatePath();
                 if (tmp == NAVIGATIONSTATUS.ERROR || (tmp == NAVIGATIONSTATUS.FINISHED && getIntPos().Equals(targetShelf)))
                 {
+                    print("done");
                     if (getIntPos().Equals(targetShelf))
                     {
                         //print("reached shelf: " + targetShelf.ToString());
@@ -89,6 +147,7 @@ public class Customer : Entity
                     }
                     if(MinDist <= 4)
                     {
+                        print("running");
                         float maxDist = 0;
                         Vector3Int maxTile = getIntPos();
                         for (int x = -2; x <= 2; x++)
@@ -126,6 +185,7 @@ public class Customer : Entity
 
         while (true)
         {
+            print("leaving");
             if (path == null)
             {
                 FindPath(exitPoint);

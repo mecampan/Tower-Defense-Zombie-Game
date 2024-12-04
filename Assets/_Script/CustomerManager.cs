@@ -7,6 +7,7 @@ public class CustomerManager : MonoBehaviour
     [SerializeField]
     [Header("Customer Settings")]
     public GameObject customerPrefab;
+    
     private Vector3Int entryPoint = new Vector3Int(0, 0, -5);
     private Vector3Int exitPoint = new Vector3Int(0, 0, -5);
     [SerializeField]
@@ -42,7 +43,10 @@ public class CustomerManager : MonoBehaviour
         // Create a new customer and set up their shopping routine
         GameObject customer = Instantiate(customerPrefab, grid.CellToWorld(entryPoint), Quaternion.identity);
         Customer customerEntity = customer.AddComponent<Customer>();
-        //customerEntity.Setup(shelves, exitPoint, customerSpeed, shelfWaitTime);
+
+
+        customerEntity.Setup(exitPoint, customerSpeed, shelfWaitTime, ref grid, ref placementSystem);
+        //customerEntity.StartCustomer();
     }
 
     public void BeginCustomerSpawner()

@@ -148,5 +148,4 @@ public class PlacementSystem : MonoBehaviour
             Debug.Log($"Position: {position}, IDs: [{ids}], PlacedObjectIndex: {data.PlacedObjectIndex}");
         }
     }
-
 }
