@@ -8,21 +8,35 @@ public class GameManager : MonoBehaviour
     [SerializeField] private GameObject startPlayModeButton; // The "Start Play Mode" button
     [SerializeField] private PlacementSystem placementSystem;
     [SerializeField] private CustomerManager customerManager;
+    [SerializeField] private UIManager uIManager;
 
     public void StartPlayMode()
     {
-        // Hide all red-boxed UI elements
-        if (panel != null)
-            panel.SetActive(false);
+        uIManager.ShowDialog(
+            () =>
+            {
+                // Yes action
+                Debug.Log("Player confirmed Play Mode");
 
-        // Hide the "Start Play Mode" button
-        if (startPlayModeButton != null)
-            startPlayModeButton.SetActive(false);
+                // Hide all red-boxed UI elements
+                if (panel != null)
+                    panel.SetActive(false);
 
-        Debug.Log("Transitioning to Play Mode. UI elements have been hidden.");
-        placementSystem.StopPlacement();
+                // Hide the "Start Play Mode" button
+                if (startPlayModeButton != null)
+                    startPlayModeButton.SetActive(false);
 
-        BeginPlayMode();
+                Debug.Log("Transitioning to Play Mode. UI elements have been hidden.");
+                placementSystem.StopPlacement();
+
+                BeginPlayMode();
+            },
+            () =>
+            {
+                // No action
+                Debug.Log("Player canceled Play Mode");
+            }
+        );
     }
 
     private void BeginPlayMode()

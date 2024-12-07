@@ -57,10 +57,13 @@ public class PlacementState : IBuildingState
 
     public void OnAction(Vector3Int gridPosition)
     {
+        Debug.Log("There is a Delay in Placement State?");
+
         bool placementValidity = CheckPlacementValidity(gridPosition, selectedObjectIndex);
         if (!placementValidity)
         {
             soundFeedback.PlaySound(SoundType.wrongPlacement);
+            EventManager.TriggerWarning(); // Call to display warning
             return;
         }
 

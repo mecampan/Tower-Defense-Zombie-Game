@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Rendering;
 
 public class PlacementSystem : MonoBehaviour
 {
@@ -13,7 +14,7 @@ public class PlacementSystem : MonoBehaviour
     private ObjectsDatabaseSO database;
 
     [SerializeField]
-    private GameObject gridVisualization;
+    private GameObject gridVisualization, mouseIndicator;
 
     [SerializeField]
     public GridData floorData, furnitureData, turretData;
@@ -46,6 +47,8 @@ public class PlacementSystem : MonoBehaviour
 
     public void StartPlacement(int ID)
     {
+        Debug.Log("There is a Delay Here in PlacementSystem?");
+
         StopPlacement();
         gridVisualization.SetActive(true);
         buildingState = new PlacementState(ID,
@@ -110,6 +113,10 @@ public class PlacementSystem : MonoBehaviour
 
     private void Update()
     {
+        // Checking Where Mouse Position Is
+        Vector3 mousePositionIn = inputManager.GetSelectedMapPosition();
+        mouseIndicator.transform.position = mousePositionIn;
+
         if (buildingState != null)
         {
             Vector3 mousePosition = inputManager.GetSelectedMapPosition();

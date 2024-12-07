@@ -72,6 +72,8 @@ public class GridData
 
     public bool CanPlaceObjectAt(Vector3Int gridPosition, Vector2Int objectSize)
     {
+        Debug.Log("Turret Placing?");
+
         int minX = -5, maxX = 4;
         int minZ = -5, maxZ = 4;
 
@@ -83,14 +85,23 @@ public class GridData
         foreach (var pos in positionsToOccupy)
         {
             if (pos.x <= minX || pos.x >= maxX || pos.z <= minZ || pos.z >= maxZ)
+            {
+                EventManager.UpdateWarningMessage("Cannot Place Objects On Edges.");
                 return false;
-
+            }
             if (placedObjects.ContainsKey(pos))
+            {
+                EventManager.UpdateWarningMessage("There Already Is An Object Here.");
                 return false;
+            }
         }
 
         if (furnitureCount <= 0 || turretCount <= 0)
+        {
+            EventManager.UpdateWarningMessage("Already at your Furniture or Turret Limit.");
             return false;
+        }
+
 
         return true;
     }
