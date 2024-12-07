@@ -174,6 +174,7 @@ public class PlacementState : IBuildingState
             // Ensure furniture exists beneath turret
             if (furnitureData.CanPlaceObjectAt(gridPosition, Vector2Int.one))
             {
+                EventManager.UpdateWarningMessage("Must Place Turrets On Top Of Shelves.");
                 return false;
             }
         }

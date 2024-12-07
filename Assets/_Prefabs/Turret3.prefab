@@ -425,7 +425,7 @@ MonoBehaviour:
   gunPoints:
   - {fileID: 3085559133564947708}
   - {fileID: 759960634834832364}
-  fireRate: 10
+  fireRate: 2
 --- !u!1 &3004357782311015121
 GameObject:
   m_ObjectHideFlags: 0

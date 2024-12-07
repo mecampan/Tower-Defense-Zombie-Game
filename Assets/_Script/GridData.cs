@@ -72,8 +72,6 @@ public class GridData
 
     public bool CanPlaceObjectAt(Vector3Int gridPosition, Vector2Int objectSize)
     {
-        Debug.Log("Turret Placing?");
-
         int minX = -5, maxX = 4;
         int minZ = -5, maxZ = 4;
 

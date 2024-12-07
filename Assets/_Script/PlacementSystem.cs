@@ -47,7 +47,7 @@ public class PlacementSystem : MonoBehaviour
 
     public void StartPlacement(int ID)
     {
-        Debug.Log("There is a Delay Here in PlacementSystem?");
+        //Debug.Log("There is a Delay Here in PlacementSystem?");
 
         StopPlacement();
         gridVisualization.SetActive(true);
