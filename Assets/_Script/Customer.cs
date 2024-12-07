@@ -100,16 +100,17 @@ public class Customer : Entity
     
     private IEnumerator PerformShopping()
     {
+        print("Customer Beginning to Shop");
+
         while (currentTargetIndex < shoppingList.Count)
         {
-            print("shopping");
             if (path == null)
             {
-                print("finding path");
+                print("Finding a path");
                 Vector3Int targetShelf = shoppingList[currentTargetIndex];
                 if (FindPath(targetShelf));
                 {
-                    print("found new shelf: " + targetShelf.ToString());
+                    print("Found new shelf: " + targetShelf.ToString());
                 }
 
             }
@@ -147,7 +148,7 @@ public class Customer : Entity
                     }
                     if(MinDist <= 4)
                     {
-                        print("running");
+                        //print("running");
                         float maxDist = 0;
                         Vector3Int maxTile = getIntPos();
                         for (int x = -2; x <= 2; x++)
@@ -197,6 +198,7 @@ public class Customer : Entity
                 {
                     if (pos.Equals(exitPoint))
                     {
+                        StartCoroutine(ShrinkAndLeave());
                         break;
                     }
                 }
@@ -204,6 +206,7 @@ public class Customer : Entity
             yield return new WaitForSeconds(waitTime);
         }
 
+        yield return new WaitForSeconds(1f);
         Destroy(gameObject);
     }
 
@@ -211,4 +214,28 @@ public class Customer : Entity
     {
         this.placementSystem = placementSystem;
     }
+
+    private IEnumerator ShrinkAndLeave()
+    {
+        float shrinkDuration = 1f; // Time it takes to shrink
+        float shrinkSpeed = 2f;    // Movement speed while shrinking
+
+        Vector3 startScale = transform.localScale;
+        float elapsedTime = 0f;
+
+        while (elapsedTime < shrinkDuration)
+        {
+            elapsedTime += Time.deltaTime;
+
+            // Shrink the object
+            float scale = Mathf.Lerp(1f, 0f, elapsedTime / shrinkDuration);
+            transform.localScale = startScale * scale;
+
+            // Continue moving forward
+            transform.position -= transform.forward * shrinkSpeed * Time.deltaTime;
+
+            yield return null; // Wait for the next frame
+        }
+    }
+
 }

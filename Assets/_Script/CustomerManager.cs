@@ -12,7 +12,7 @@ public class CustomerManager : MonoBehaviour
     private Vector3Int exitPoint = new Vector3Int(0, 0, -5);
     [SerializeField]
     public List<Vector3Int> shelves; // List of shelf locations
-    public float spawnInterval = 2f; // Time between customer spawns
+    public float spawnInterval = 10f; // Time between customer spawns
     [SerializeField]
     public float customerSpeed = 2f; // Speed at which customers move
     public float shelfWaitTime = 3f; // Time customers wait at each shelf
@@ -35,7 +35,7 @@ public class CustomerManager : MonoBehaviour
                 SpawnCustomer();
                 CurrentCustomersInStore++;
             }
-            yield return new WaitForSeconds(spawnInterval);
+            yield return new WaitForSeconds(7f);
         }
     }
     private void SpawnCustomer()
@@ -52,7 +52,7 @@ public class CustomerManager : MonoBehaviour
     public void BeginCustomerSpawner()
     {
         Debug.Log("Starting Customer Spawner");
-        StartCoroutine(SpawnCustomers()); // Start the coroutine properly
+        StartCoroutine(SpawnCustomers());
     }
 }
 //public class CustomerManager : MonoBehaviour

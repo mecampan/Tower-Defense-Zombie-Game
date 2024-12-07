@@ -14,7 +14,7 @@ public class PlacementSystem : MonoBehaviour
     private ObjectsDatabaseSO database;
 
     [SerializeField]
-    private GameObject gridVisualization, mouseIndicator;
+    private GameObject gridVisualization; //mouseIndicator;
 
     [SerializeField]
     public GridData floorData, furnitureData, turretData;
@@ -114,8 +114,8 @@ public class PlacementSystem : MonoBehaviour
     private void Update()
     {
         // Checking Where Mouse Position Is
-        Vector3 mousePositionIn = inputManager.GetSelectedMapPosition();
-        mouseIndicator.transform.position = mousePositionIn;
+        //Vector3 mousePositionIn = inputManager.GetSelectedMapPosition();
+        //mouseIndicator.transform.position = mousePositionIn;
 
         if (buildingState != null)
         {
