@@ -79,7 +79,7 @@ public class Customer : Entity
             shoppingList.Add(tmpTiles[tmpIndex]);
         }
 
-        print("shoppingListLen: " + shoppingList.Count);
+        //print("shoppingListLen: " + shoppingList.Count);
 
         // Generate a random shopping list from available shelves
         // int itemsToBuy = UnityEngine.Random.Range(1, shelves.Count + 1); // 1 to all shelves
@@ -100,7 +100,7 @@ public class Customer : Entity
     
     private IEnumerator PerformShopping()
     {
-        print("Customer Beginning to Shop");
+        //print("Customer Beginning to Shop");
 
         while (currentTargetIndex < shoppingList.Count)
         {
@@ -110,7 +110,7 @@ public class Customer : Entity
                 Vector3Int targetShelf = shoppingList[currentTargetIndex];
                 if (FindPath(targetShelf));
                 {
-                    print("Found new shelf: " + targetShelf.ToString());
+                    //print("Found new shelf: " + targetShelf.ToString());
                 }
 
             }
@@ -186,7 +186,7 @@ public class Customer : Entity
 
         while (true)
         {
-            print("leaving");
+            //print("leaving");
             if (path == null)
             {
                 FindPath(exitPoint);

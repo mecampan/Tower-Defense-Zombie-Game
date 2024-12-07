@@ -8,6 +8,7 @@ public class GameManager : MonoBehaviour
     [SerializeField] private GameObject startPlayModeButton; // The "Start Play Mode" button
     [SerializeField] private PlacementSystem placementSystem;
     [SerializeField] private CustomerManager customerManager;
+    [SerializeField] private ZombieManager zombieManager;
     [SerializeField] private UIManager uIManager;
 
     public void StartPlayMode()
@@ -15,26 +16,27 @@ public class GameManager : MonoBehaviour
         uIManager.ShowDialog(
             () =>
             {
-                // Yes action
-                Debug.Log("Player confirmed Play Mode");
+                Debug.Log("Yes clicked: Transitioning to Play Mode");
 
-                // Hide all red-boxed UI elements
+                // Ensure popup is destroyed before hiding other UI
                 if (panel != null)
+                {
+                    Debug.Log("Hiding panel...");
                     panel.SetActive(false);
+                }
 
-                // Hide the "Start Play Mode" button
                 if (startPlayModeButton != null)
+                {
+                    Debug.Log("Hiding StartPlayMode button...");
                     startPlayModeButton.SetActive(false);
+                }
 
-                Debug.Log("Transitioning to Play Mode. UI elements have been hidden.");
                 placementSystem.StopPlacement();
-
                 BeginPlayMode();
             },
             () =>
             {
-                // No action
-                Debug.Log("Player canceled Play Mode");
+                Debug.Log("No clicked: Canceled Play Mode");
             }
         );
     }
@@ -45,5 +47,6 @@ public class GameManager : MonoBehaviour
         Debug.Log("Play Mode started! Gameplay logic goes here.");
 
         customerManager.BeginCustomerSpawner();
+        zombieManager.BeginZombieSpawner();
     }
 }

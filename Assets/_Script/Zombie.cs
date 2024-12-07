@@ -7,12 +7,41 @@ using static UnityEditor.PlayerSettings;
 public class Zombie : Entity
 {
     private Vector3Int TargetTile;
+    private int health = 5;
 
     // Start is called before the first frame update
     void Start()
     {
         StartCoroutine(AttackNearestCustomer());
     }
+    // Health system
+
+    void OnCollisionEnter(Collision other)
+    {
+        // Check if the colliding object is tagged as "Bullet"
+        if (other.gameObject.CompareTag("Bullet"))
+        {
+            TakeDamage(1); // Reduce health by 1 per hit
+        }
+    }
+
+    public void TakeDamage(int damage)
+    {
+        health -= damage;
+        Debug.Log($"Zombie took {damage} damage. Health remaining: {health}");
+
+        if (health <= 0)
+        {
+            Die();
+        }
+    }
+
+    private void Die()
+    {
+        Debug.Log("Zombie died!");
+        Destroy(gameObject); // Destroy the zombie
+    }
+
 
     private List<Vector3Int> GetZombiePosList()
     {
