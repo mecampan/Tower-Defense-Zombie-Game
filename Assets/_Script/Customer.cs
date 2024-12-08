@@ -46,12 +46,6 @@ public class Customer : Entity
     private Vector3Int exitPoint;
     private int currentTargetIndex = 0;
 
-
-    public void StartCustomer()
-    {
-        StartCoroutine(PerformShopping());
-    }
-
     
     public void Setup(Vector3Int spawnPosition, List<Sprite> Sprites, Vector3Int exit, float speed, float wait, ref Grid InputGrid, ref PlacementSystem inputPlacementSystem)
     {
@@ -194,7 +188,7 @@ public class Customer : Entity
                             MinDist = tmpDist;
                         }
                     }
-                    if(MinDist <= 4)
+                    if(MinDist <= 2)
                     {
                         //print("running");
                         if (image != null && 6 < ShoppingItems.Count && ShoppingItems[6].image != null)

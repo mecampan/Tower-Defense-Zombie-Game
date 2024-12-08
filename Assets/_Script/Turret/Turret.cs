@@ -45,10 +45,27 @@ public class Turret : MonoBehaviour
 
     void Update()
     {
-        //Only shoot what is in range.
-        Transform detected =  GameObject.FindGameObjectWithTag("Enemy")?.transform;
-        if(!detected) return;
-        if (Vector3.Distance(this.transform.position, detected.position) < range){
+        List<Vector3Int> outList = new List<Vector3Int> { };
+        Zombie closestZombie = null;
+        float closeDist = float.MaxValue;
+        Zombie[] Zombies = Zombie.FindObjectsOfType<Zombie>();
+        foreach (Zombie zombie in Zombies)
+        {
+            if (zombie != null)
+            {
+                float tmpDist = Vector3.Distance(this.transform.position, zombie.transform.position + new Vector3(0.5f, 0.4f, 0.5f));
+                if (tmpDist < closeDist)
+                {
+                    closestZombie = zombie;
+                    closeDist = tmpDist;
+                }
+            }
+        }
+            //Only shoot what is in range.
+            //Transform detected = GameObject.FindGameObjectWithTag("Enemy")?.transform;
+            Transform detected = closestZombie?.transform;
+            if (!detected) return;
+        if (Vector3.Distance(this.transform.position, detected.position + new Vector3(0.5f, 0.4f, 0.5f)) < range){
             target = detected;
         }else{
             target = null; 
@@ -60,7 +77,7 @@ public class Turret : MonoBehaviour
         var aimed = true;
         foreach (var mountPoint in mountPoints)
         {
-            if (!mountPoint.Aim(target.position))
+            if (!mountPoint.Aim(target.position + new Vector3(0.5f, 0.4f, 0.5f)))
             {
                 aimed = false;
             }

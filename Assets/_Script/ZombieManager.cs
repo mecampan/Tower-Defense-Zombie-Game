@@ -23,9 +23,10 @@ public class ZombieManager : MonoBehaviour
     };
 
     public List<Vector3Int> shelves; // List of shelf locations
-    private float spawnInterval = 10f; // Time between zombie spawns
+    private float spawnInterval = 4f; // Time between zombie spawns
     private float zombieSpeed = 2f; // Speed at which zombies move
-    public float ZombieDeltaTime = 0.03f; // Time customers wait at each shelf
+    [SerializeField]
+    public float ZombieDeltaTime = 0.01f; // Time customers wait at each shelf
     private Vector3Int exitPoint = new Vector3Int(0, 0, -5);
 
     [SerializeField]

@@ -50,7 +50,7 @@ public class CustomerManager : MonoBehaviour
 
 
         customerEntity.Setup(entryPoint, Sprites, exitPoint, customerSpeed, shelfWaitTime, ref grid, ref placementSystem);
-        customerEntity.StartCustomer();
+        //customerEntity.StartCustomer();
     }
 
     public void BeginCustomerSpawner()

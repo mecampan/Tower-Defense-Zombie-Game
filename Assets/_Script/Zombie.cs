@@ -4,7 +4,7 @@ using System.IO;
 using UnityEngine;
 using static UnityEditor.PlayerSettings;
 
-public class Zombie : Entity
+/*public class Zombie : Entity
 {
     [SerializeField]
     [Header("Zombie Testing")]
@@ -14,7 +14,6 @@ public class Zombie : Entity
     private Vector3Int exitPoint;
     private int currentTargetIndex = 0;
     private int health = 5;
-    protected float waitTime = 0.003f;
     public void StartZombie()
     {
         StartCoroutine(StartRoaming());
@@ -81,6 +80,7 @@ public class Zombie : Entity
         waitTime = DeltaTime;
 
         // Start moving to random locations
+        StartCoroutine(FadeIn());
         StartCoroutine(StartRoaming());
     }
     
@@ -110,7 +110,7 @@ public class Zombie : Entity
                     break; // Stop moving once the zombie reaches the exit
                 }
             }
-            //Debug.Log("waiting " + waitTime +  " seconds");
+            Debug.Log("waiting " + waitTime +  " seconds");
             yield return new WaitForSeconds(waitTime); // Wait before the next step
         }
 
@@ -122,8 +122,38 @@ public class Zombie : Entity
     {
         this.placementSystem = placementSystem;
     }
-}
 
+    private IEnumerator FadeIn()
+    {
+        float alpha = 0.0f;
+        float fadeSpeed = 10f;    // Movement speed while shrinking
+        UpdatePos();
+        bool bRunAgain = true;
+        while (alpha <= 1.0)
+        {
+            MeshRenderer[] meshRenderers = GetComponentsInChildren<MeshRenderer>();
+            foreach (MeshRenderer meshRenderer in meshRenderers)
+            {
+                UnityEngine.Color color = meshRenderer.material.color;
+                color.a = alpha;
+                meshRenderer.material.color = color;
+            }
+            alpha += fadeSpeed * Time.deltaTime;
+            yield return null; // Wait for the next frame
+        }
+        if (true)
+        {
+            MeshRenderer[] meshRenderers = GetComponentsInChildren<MeshRenderer>();
+            foreach (MeshRenderer meshRenderer in meshRenderers)
+            {
+                UnityEngine.Color color = meshRenderer.material.color;
+                color.a = 1.0f;
+                meshRenderer.material.color = color;
+            }
+        }
+    }
+}
+*/
 
 /*
 public class Zombie : Entity
@@ -152,14 +182,17 @@ public class Zombie : Entity
 
         }
     }
-   public void Setup(float speed, ref Grid InputGrid, ref PlacementSystem inputPlacementSystem)
+   public void Setup(Vector3Int spawnPosition, Vector3Int exit, float speed, float DeltaTime, ref Grid InputGrid, ref PlacementSystem inputPlacementSystem)
     {
         grid = InputGrid;
         placementSystem = inputPlacementSystem;
+        pos = spawnPosition;
 
-        
+
+
         GridData floorData = placementSystem.floorData;
         Dictionary<Vector3Int, PlacementData> placedObjects = floorData.GetAllPlacedObjects();
+
 
 
         Dictionary<int, List<Vector3Int>> storedTiles = new Dictionary<int, List<Vector3Int>>();
@@ -191,6 +224,10 @@ public class Zombie : Entity
             //Debug.Log($"Position: {position}, IDs: [{ids}], PlacedObjectIndex: {data.PlacedObjectIndex}");
         }
 
+        moveSpeed = speed;
+        waitTime = DeltaTime;
+
+        StartCoroutine(FadeIn());
         StartCoroutine(AttackNearestCustomer());
     }
 
@@ -344,4 +381,236 @@ public class Zombie : Entity
             yield return new WaitForSeconds(waitTime);
         }
     }
-}*/
+    private IEnumerator FadeIn()
+    {
+        float alpha = 0.0f;
+        float fadeSpeed = 10f;    // Movement speed while shrinking
+        UpdatePos();
+        bool bRunAgain = true;
+        while (alpha <= 1.0)
+        {
+            MeshRenderer[] meshRenderers = GetComponentsInChildren<MeshRenderer>();
+            foreach (MeshRenderer meshRenderer in meshRenderers)
+            {
+                UnityEngine.Color color = meshRenderer.material.color;
+                color.a = alpha;
+                meshRenderer.material.color = color;
+            }
+            alpha += fadeSpeed * Time.deltaTime;
+            yield return null; // Wait for the next frame
+        }
+        if (true)
+        {
+            MeshRenderer[] meshRenderers = GetComponentsInChildren<MeshRenderer>();
+            foreach (MeshRenderer meshRenderer in meshRenderers)
+            {
+                UnityEngine.Color color = meshRenderer.material.color;
+                color.a = 1.0f;
+                meshRenderer.material.color = color;
+            }
+        }
+    }
+}
+*/
+
+public class Zombie : Entity
+{
+    private Vector3Int TargetTile;
+    private int health = 5;
+
+    // Start is called before the first frame update
+    void Start()
+    {
+        //StartCoroutine(AttackNearestCustomer());
+    }
+
+    void OnCollisionEnter(Collision other)
+    {
+        // Check if the colliding object is tagged as "Bullet"
+        if (other.gameObject.CompareTag("Bullet"))
+        {
+            health -= 1;
+            Debug.Log($"Zombie took {1} damage. Health remaining: {health}");
+
+            if (health <= 0)
+            {
+                Destroy(gameObject); // Destroy the zombie
+            }
+
+        }
+    }
+
+    public void Setup(Vector3Int spawnPosition, Vector3Int exit, float speed, float DeltaTime, ref Grid InputGrid, ref PlacementSystem inputPlacementSystem)
+    {
+        grid = InputGrid;
+        placementSystem = inputPlacementSystem;
+        pos = spawnPosition;
+
+
+
+        GridData floorData = placementSystem.floorData;
+        Dictionary<Vector3Int, PlacementData> placedObjects = floorData.GetAllPlacedObjects();
+
+
+
+        Dictionary<int, List<Vector3Int>> storedTiles = new Dictionary<int, List<Vector3Int>>();
+        foreach (var entry in placedObjects)
+        {
+            Vector3Int position = entry.Key;
+            PlacementData data = entry.Value;
+
+            HashSet<int> ids = data.IDs;
+
+            foreach (int id in ids)
+            {
+                if (storedTiles.ContainsKey(id))
+                {
+                    List<Vector3Int> outList;
+                    storedTiles.TryGetValue(id, out outList);
+                    if (outList != null)
+                    {
+                        outList.Add(position);
+                    }
+                    else
+                    {
+                        outList = new List<Vector3Int>() { position };
+                    }
+                }
+                else
+                {
+                    storedTiles.Add(id, new List<Vector3Int>() { position });
+                }
+            }
+
+            //string ids = string.Join(", ", data.IDs); // Convert IDs to a comma-separated string
+
+            //Debug.Log($"Position: {position}, IDs: [{ids}], PlacedObjectIndex: {data.PlacedObjectIndex}");
+        }
+
+        moveSpeed = speed;
+        waitTime = DeltaTime;
+
+        StartCoroutine(FadeIn());
+        StartCoroutine(AttackNearestCustomer());
+    }
+
+    private List<Vector3Int> GetZombiePosList()
+    {
+        List<Vector3Int> outList = new List<Vector3Int> { };
+        Zombie[] Zombies = Zombie.FindObjectsOfType<Zombie>();
+        foreach (Zombie zombie in Zombies)
+        {
+            if (zombie != null && zombie != this)
+            {
+                if (!zombie.getIntPos().Equals(getIntPos()))
+                {
+                    outList.Add(zombie.getIntPos());
+                }
+                if (zombie.path != null && zombie.currentIndex >= 0 && zombie.currentIndex <= zombie.path.Count - 1)
+                {
+                    outList.Add(zombie.path[zombie.currentIndex]);
+                }
+                if (zombie.path != null && zombie.currentIndex - 1 >= 0 && zombie.currentIndex - 1 <= zombie.path.Count - 1)
+                {
+                    outList.Add(zombie.path[zombie.currentIndex - 1]);
+                }
+                //if (zombie.path != null && zombie.currentIndex - 2 >= 0 && zombie.currentIndex - 2 <= zombie.path.Count - 1)
+                //{
+                //    outList.Add(zombie.path[zombie.currentIndex - 2]);
+                //}
+            }
+        }
+        return outList;
+    }
+
+    private void FindNearestCustomer()
+    {
+        if (placementSystem == null)
+        {
+            print("placementSystem not set");
+        }
+        else
+        {
+            if (gridData == null)
+            {
+                gridData = placementSystem.furnitureData;
+            }
+            if (placementSystem.furnitureData != null)
+            {
+                float minDist = float.MaxValue;
+                Customer[] Customers = Customer.FindObjectsOfType<Customer>();
+                foreach (Customer customer in Customers)
+                {
+                    if (customer != null)
+                    {
+                        float tmpDist = Vector3.Distance(customer.getPos(), pos);
+                        if (tmpDist < minDist)
+                        {
+                            minDist = tmpDist;
+                            TargetTile = customer.getIntPos();
+                            //print("found Customer: " + TargetTile.ToString());
+                        }
+                    }
+                }
+            }
+        }
+    }
+    private IEnumerator AttackNearestCustomer()
+    {
+        while (true)
+        {
+            if (path == null)
+            {
+                FindNearestCustomer();
+                FindPath(TargetTile, GetZombiePosList());
+            }
+            else if (Vector3.Distance(pos, TargetTile) < 0.5)
+            {
+                FindNearestCustomer();
+            }
+            else if (path.Count > 0)
+            {
+                NAVIGATIONSTATUS tmp = NavigatePath();
+                if (tmp == NAVIGATIONSTATUS.ERROR || tmp == NAVIGATIONSTATUS.ATTILE || tmp == NAVIGATIONSTATUS.FINISHED)
+                {
+                    path = null;
+                }
+            }
+            else
+            {
+                path = null;
+            }
+            yield return new WaitForSeconds(waitTime);
+        }
+        Destroy(gameObject);
+    }
+    private IEnumerator FadeIn()
+    {
+        float alpha = 0.0f;
+        float fadeSpeed = 10f;    // Movement speed while shrinking
+        UpdatePos();
+        bool bRunAgain = true;
+        while (alpha <= 1.0)
+        {
+            MeshRenderer[] meshRenderers = GetComponentsInChildren<MeshRenderer>();
+            foreach (MeshRenderer meshRenderer in meshRenderers)
+            {
+                UnityEngine.Color color = meshRenderer.material.color;
+                color.a = alpha;
+                meshRenderer.material.color = color;
+            }
+            alpha += fadeSpeed * Time.deltaTime;
+            yield return null; // Wait for the next frame
+        }
+        if (true)
+        {
+            MeshRenderer[] meshRenderers = GetComponentsInChildren<MeshRenderer>();
+            foreach (MeshRenderer meshRenderer in meshRenderers)
+            {
+                UnityEngine.Color color = meshRenderer.material.color;
+                color.a = 1.0f;
+                meshRenderer.material.color = color;
+            }
+        }
+    }
+}

@@ -28,15 +28,16 @@ public class Shot : MonoBehaviour
     {
         var displacement = velocity * Time.deltaTime;
         rb.MovePosition(rb.position + displacement);
-        if (Mathf.Abs(rb.position.x) > (range + 1) || Mathf.Abs(rb.position.y) > (range + 1) || Mathf.Abs(rb.position.z) > (range + 1)){
-            Destroy(gameObject);
-        }
+        //if (Mathf.Abs(rb.position.x) > (range + 1) || Mathf.Abs(rb.position.y) > (range + 1) || Mathf.Abs(rb.position.z) > (range + 1)){
+        //    Destroy(gameObject);
+        //}
     }
 
     void OnCollisionEnter(Collision other)
     {
         // var hitEffect = Instantiate(hitPrefab, other.GetContact(0).point, Quaternion.identity);
         // Destroy(hitEffect, 5f);
+        print("other object: " + other.gameObject.ToString());
         Destroy(gameObject);
     }
 
