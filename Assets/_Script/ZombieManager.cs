@@ -8,18 +8,23 @@ public class ZombieManager : MonoBehaviour
     public GameObject zombiePrefab;
     private Vector3Int[] entryPoints = new Vector3Int[]
     {
-        new Vector3Int(0, 0, 4),
-        new Vector3Int(1, 0, 4),
-        new Vector3Int(2, 0, 4),
-        new Vector3Int(3, 0, 4),
+        //Left Side Spawns
+        new Vector3Int(-5, 0, 2),
+        new Vector3Int(-5, 0, -1),
+        new Vector3Int(-5, 0, -4),
+        // Upper Side Spawns
+        new Vector3Int(-4, 0, 4),
         new Vector3Int(-1, 0, 4),
-        new Vector3Int(-2, 0, 4),
-        new Vector3Int(-3, 0, 4),        
+        new Vector3Int(3, 0, 4),
+        // Right Side Spawns
+        new Vector3Int(4, 0, 2),        
+        new Vector3Int(4, 0, -1),        
+        new Vector3Int(4, 0, -4),        
     };
 
     public List<Vector3Int> shelves; // List of shelf locations
-    private float spawnInterval = 5f; // Time between zombie spawns
-    private float zombieSpeed = 1.5f; // Speed at which zombies move
+    private float spawnInterval = 10f; // Time between zombie spawns
+    private float zombieSpeed = 2f; // Speed at which zombies move
     public float ZombieDeltaTime = 0.03f; // Time customers wait at each shelf
     private Vector3Int exitPoint = new Vector3Int(0, 0, -5);
 
@@ -27,19 +32,21 @@ public class ZombieManager : MonoBehaviour
     Grid grid;
     [SerializeField]
     private PlacementSystem placementSystem;
-    private int MaxZombiesToBeSpawned = 5;
+    private int MaxZombiesToBeSpawned = 50;
     private int CurrentZombiesSpawned = 0;
     private IEnumerator SpawnZombies()
     {
         while (CurrentZombiesSpawned < MaxZombiesToBeSpawned)
         {
-            Debug.Log("Spawning Zombie at entry point.");
             SpawnZombie();
             CurrentZombiesSpawned++;
 
-            // Reduce spawn interval, with a minimum of 1 second
-            spawnInterval = Mathf.Max(spawnInterval - 0.1f, 1f);
             yield return new WaitForSeconds(spawnInterval);
+            spawnInterval-= 0.5f;
+            if(spawnInterval < 1f)
+            {
+                spawnInterval = 1f;
+            }
         }
     }
 
@@ -60,7 +67,6 @@ public class ZombieManager : MonoBehaviour
 
     public void BeginZombieSpawner()
     {
-        Debug.Log("Starting Customer Spawner");
         StartCoroutine(SpawnZombies());
     }
 }

@@ -16,4 +16,16 @@ public static class EventManager
             OnWarning?.Invoke(storedWarningMessage);
         }
     }
+
+    // Tooltip System
+    public static Action<string, bool> OnTooltip; // Pass tooltip message and visibility state
+    public static void ShowTooltip(string message)
+    {
+        OnTooltip?.Invoke(message, true); // Trigger tooltip visibility ON
+    }
+
+    public static void HideTooltip()
+    {
+        OnTooltip?.Invoke(string.Empty, false); // Trigger tooltip visibility OFF
+    }
 }

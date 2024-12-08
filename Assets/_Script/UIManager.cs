@@ -6,14 +6,42 @@ using UnityEngine.UI;
 public class UIManager : MonoBehaviour
 {
     [SerializeField] private TextMeshProUGUI turretCounterNum, furnitureCounterNum;
-    [SerializeField] private Canvas UI; // Reference to your Canvas
-    [SerializeField] private GameObject textPrefab; // Prefab for dynamically creating the warning text
-    [SerializeField] private GameObject popupPrefab; // Prefab for the dialog box
+    [SerializeField] private Canvas UI;
+    [SerializeField] private GameObject textPrefab;     
+    [SerializeField] private GameObject popupPrefab;
+    [SerializeField] private GameObject toolTip;
+    [SerializeField] private TextMeshProUGUI tooltipText;
+    [SerializeField] private RectTransform canvasRectTransform;
 
-    public float displayDuration = 1f;
+    private float displayDuration = 2f;
 
     private GameObject currentWarningObject; // To track the created text object
     private GameObject currentPopupObject; // To track the created popup menu
+
+    void OnEnable()
+    {
+        EventManager.OnWarning += CreateAndShowText;
+        EventManager.OnTooltip += HandleTooltip;
+    }
+
+    void OnDisable()
+    {
+        EventManager.OnWarning -= CreateAndShowText;
+        EventManager.OnTooltip -= HandleTooltip;
+    }
+
+    private void Start()
+    {
+        toolTip.SetActive(false);
+    }
+
+    private void Update()
+    {
+        if (toolTip.activeSelf)
+        {
+            FollowMouse();
+        }
+    }
 
     public void UpdateTurretCounter(int count)
     {
@@ -23,16 +51,6 @@ public class UIManager : MonoBehaviour
     public void UpdateFurnitureCounter(int count)
     {
         furnitureCounterNum.text = $"{count}";
-    }
-
-    void OnEnable()
-    {
-        EventManager.OnWarning += CreateAndShowText;
-    }
-
-    void OnDisable()
-    {
-        EventManager.OnWarning -= CreateAndShowText;
     }
 
     private void CreateAndShowText(string message)
@@ -52,7 +70,6 @@ public class UIManager : MonoBehaviour
             textComponent.text = message;
         }
 
-        // Start coroutine to destroy the object after duration
         StartCoroutine(DestroyTextAfterDuration());
     }
 
@@ -66,25 +83,57 @@ public class UIManager : MonoBehaviour
         }
     }
 
-
     public void ShowDialog(System.Action onYes, System.Action onNo)
     {
-        GameObject popUpInstance = Instantiate(popupPrefab, UI.transform);
+        if (currentPopupObject != null) return;
 
-        // Configure the Yes button
-        Button yesButton = popUpInstance.transform.Find("YesButton").GetComponent<Button>();
+        currentPopupObject = Instantiate(popupPrefab, UI.transform);
+
+        Button yesButton = currentPopupObject.transform.Find("YesButton").GetComponent<Button>();
         yesButton.onClick.AddListener(() =>
         {
-            onYes?.Invoke(); // Execute Yes action
-            Destroy(popUpInstance); // Close dialog
+            onYes?.Invoke();
+            DestroyPopup();
         });
 
-        // Configure the No button
-        Button noButton = popUpInstance.transform.Find("NoButton").GetComponent<Button>();
+        Button noButton = currentPopupObject.transform.Find("NoButton").GetComponent<Button>();
         noButton.onClick.AddListener(() =>
         {
-            onNo?.Invoke(); // Execute No action
-            Destroy(popUpInstance); // Close dialog
+            onNo?.Invoke();
+            DestroyPopup();
         });
+    }
+
+    private void DestroyPopup()
+    {
+        if (currentPopupObject != null)
+        {
+            Destroy(currentPopupObject);
+            currentPopupObject = null;
+        }
+    }
+
+    private void HandleTooltip(string message, bool isVisible)
+    {
+        toolTip.SetActive(isVisible); // Show or hide the tooltip
+        if (isVisible)
+        {
+            tooltipText.text = message; // Update tooltip text
+        }
+    }
+
+
+    private void FollowMouse()
+    {
+        Vector2 localPoint;
+        RectTransformUtility.ScreenPointToLocalPointInRectangle(
+            canvasRectTransform,
+            Input.mousePosition,
+            null, // Camera is null for Screen Space - Overlay
+            out localPoint);
+
+        // Update tooltip position with an offset
+        RectTransform toolTipRect = toolTip.GetComponent<RectTransform>();
+        toolTipRect.anchoredPosition = localPoint + new Vector2(-100f, 100f);
     }
 }

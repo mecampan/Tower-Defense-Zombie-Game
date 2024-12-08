@@ -25,7 +25,7 @@ public class Zombie : Entity
         if (other.gameObject.CompareTag("Bullet"))
         {
             health -= 1;
-            Debug.Log($"Zombie took {1} damage. Health remaining: {health}");
+            //Debug.Log($"Zombie took {1} damage. Health remaining: {health}");
 
             if (health <= 0)
             {
@@ -90,14 +90,14 @@ public class Zombie : Entity
         {
             if (path == null || path.Count == 0)
             {
-                Debug.Log("Finding path to the exit.");
+                //Debug.Log("Finding path to the exit.");
                 FindPath(exitPoint); // Compute a path tso the exit
             }
 
             if (path != null && path.Count > 0)
             {
                 NAVIGATIONSTATUS navStatus = NavigatePath();
-                Debug.Log("Navigating the Path");
+                //Debug.Log("Navigating the Path");
 
                 if (navStatus == NAVIGATIONSTATUS.ERROR)
                 {
@@ -110,11 +110,11 @@ public class Zombie : Entity
                     break; // Stop moving once the zombie reaches the exit
                 }
             }
-            Debug.Log("waiting " + waitTime +  " seconds");
+            //Debug.Log("waiting " + waitTime +  " seconds");
             yield return new WaitForSeconds(waitTime); // Wait before the next step
         }
 
-        Debug.Log("Zombie exiting...");
+        //Debug.Log("Zombie exiting...");
     }
 
 

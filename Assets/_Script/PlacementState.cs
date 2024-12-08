@@ -167,19 +167,27 @@ public class PlacementState : IBuildingState
 
     private bool CheckPlacementValidity(Vector3Int gridPosition, int selectedObjectIndex)
     {
+        // Get the selected object's data
         GridData selectedData = GetSelectedData();
+        ObjectData selectedObject = database.objectsData[selectedObjectIndex];
 
-        if (database.objectsData[selectedObjectIndex].ID >= 6) // Modular turret check
+        // Ensure turrets are placed only on furniture
+        if (selectedObject.ID >= 6) // Assuming Turret IDs start from 6
         {
-            // Ensure furniture exists beneath turret
-            if (furnitureData.CanPlaceObjectAt(gridPosition, Vector2Int.one))
+            if (!furnitureData.HasObjectAt(gridPosition))
             {
-                EventManager.UpdateWarningMessage("Must Place Turrets On Top Of Shelves.");
-                return false;
+                EventManager.UpdateWarningMessage("Turrets must be placed on furniture.");
+                return false; // Invalid if no furniture below
             }
         }
 
-        return selectedData.CanPlaceObjectAt(gridPosition, database.objectsData[selectedObjectIndex].Size);
+        // General placement rules for selected data
+        if (!selectedData.CanPlaceObjectAt(gridPosition, selectedObject.Size))
+        {
+            return false;
+        }
+
+        return true;
     }
 
     public void UpdateState(Vector3Int gridPosition)

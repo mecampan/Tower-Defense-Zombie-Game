@@ -137,26 +137,26 @@ public class Customer : Entity
     
     private IEnumerator PerformShopping()
     {
-        print("Customer Beginning to Shop");
+        //print("Customer Beginning to Shop");
 
         while (currentTargetIndex < shoppingList.Count)
         {
             if (path == null)
             {
-                print("Finding a path");
+                //print("Finding a path");
                 ShoppingListItem targetShelf = shoppingList[currentTargetIndex];
                 if (FindPath(targetShelf.pos));
                 {
                     if (image != null && ShoppingItems != null && currentTargetIndex >= 0 && currentTargetIndex < shoppingList.Count && shoppingList[currentTargetIndex].id - 1 >= 0 && shoppingList[currentTargetIndex].id - 1 < ShoppingItems.Count && ShoppingItems[shoppingList[currentTargetIndex].id - 1].image != null)
                     {
-                        print("sprite changed to: " + (shoppingList[currentTargetIndex].id - 1) + ", " + ShoppingItems[shoppingList[currentTargetIndex].id - 1].image.ToString());
+                        //print("sprite changed to: " + (shoppingList[currentTargetIndex].id - 1) + ", " + ShoppingItems[shoppingList[currentTargetIndex].id - 1].image.ToString());
                         image.sprite = ShoppingItems[shoppingList[currentTargetIndex].id - 1].image;
                     }
                     else
                     {
                         print("Sprite not changed: " + (image != null) + ", " + (ShoppingItems != null) + ", " + (currentTargetIndex >= 0) + ", " + (currentTargetIndex < shoppingList.Count) + ", " + (shoppingList[currentTargetIndex].id >= 0) + ", " + (shoppingList[currentTargetIndex].id < ShoppingItems.Count) + ", " + (ShoppingItems[shoppingList[currentTargetIndex].id].image != null));
                     }
-                    print("Found new shelf: " + targetShelf.ToString());
+                    //print("Found new shelf: " + targetShelf.ToString());
                 }
 
             }
@@ -166,10 +166,10 @@ public class Customer : Entity
                 NAVIGATIONSTATUS tmp = NavigatePath();
                 if (tmp == NAVIGATIONSTATUS.ERROR || (tmp == NAVIGATIONSTATUS.FINISHED && getIntPos().Equals(targetShelf.pos)))
                 {
-                    print("done");
+                    //print("done");
                     if (getIntPos().Equals(targetShelf.pos))
                     {
-                        print("reached shelf: " + targetShelf.ToString());
+                        //print("reached shelf: " + targetShelf.ToString());
                         currentTargetIndex++;
                     }
                     path = null;
@@ -179,7 +179,7 @@ public class Customer : Entity
                     path = null;
                     if (getIntPos().Equals(targetShelf.pos))
                     {
-                        print("reached shelf: " + targetShelf.ToString());
+                        //print("reached shelf: " + targetShelf.ToString());
                         currentTargetIndex++;
                     }
                     Zombie[] Zombies = Zombie.FindObjectsOfType<Zombie>();
@@ -194,10 +194,10 @@ public class Customer : Entity
                     }
                     if(MinDist <= 4)
                     {
-                        print("running");
+                        //print("running");
                         if (image != null && 6 < ShoppingItems.Count && ShoppingItems[6].image != null)
                         {
-                            print("sprite changed to: " + (6) + ", " + ShoppingItems[6].image.ToString());
+                            //print("sprite changed to: " + (6) + ", " + ShoppingItems[6].image.ToString());
                             image.sprite = ShoppingItems[6].image;
                         }
                         else
@@ -241,13 +241,13 @@ public class Customer : Entity
 
         while (true)
         {
-            print("leaving");
+            //print("leaving");
             if (path == null)
             {
                 FindPath(exitPoint);
                 if (image != null && 5 < ShoppingItems.Count && ShoppingItems[5].image != null)
                 {
-                    print("sprite changed to: " + (5) + ", " + ShoppingItems[5].image.ToString());
+                    //print("sprite changed to: " + (5) + ", " + ShoppingItems[5].image.ToString());
                     image.sprite = ShoppingItems[5].image;
                 }
                 else
