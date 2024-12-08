@@ -241,6 +241,7 @@ MonoBehaviour:
   zombiePrefab: {fileID: 4940876463447517691, guid: 56f16fcc414b0fd4985ec4d73d574e1a,
     type: 3}
   shelves: []
+  ZombieDeltaTime: 0.03
   grid: {fileID: 534376281}
   placementSystem: {fileID: 1369282340}
 --- !u!1 &271463913
@@ -5742,6 +5743,14 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   customerPrefab: {fileID: 2181907222083929351, guid: ef13ce5311521a949989223aedf9acf2,
     type: 3}
+  Sprites:
+  - {fileID: 21300000, guid: dc121577156470d469d99b10e154a0fa, type: 3}
+  - {fileID: 21300000, guid: cbacaa59e6377e144adc45689c0396a4, type: 3}
+  - {fileID: 21300000, guid: e97ae3e52286ec242a75e42e6fae49cf, type: 3}
+  - {fileID: 21300000, guid: 4d58d649efa2e064c922848f22325ef8, type: 3}
+  - {fileID: 21300000, guid: ae5f78a367d212d4db1298b84515959f, type: 3}
+  - {fileID: 21300000, guid: c0fbe2fcd39dffd40aaef03a9262f980, type: 3}
+  - {fileID: 21300000, guid: c159d9191ce257b4a94f17ed947fdf2e, type: 3}
   shelves: []
   spawnInterval: 2
   customerSpeed: 3

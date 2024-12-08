@@ -5,12 +5,41 @@ using System.IO;
 using System.Security.Cryptography;
 using Unity.Mathematics;
 using UnityEngine;
+using UnityEngine.UI;
+using static UnityEditor.PlayerSettings;
+
+struct ShoppingItem
+{
+    public int id;
+    public Sprite image;
+    public ShoppingItem(int ID, Sprite IMAGE)
+    {
+        id = ID;
+        image = IMAGE;
+    }
+}
+
+struct ShoppingListItem
+{
+    public int id;
+    public Vector3Int pos;
+    public ShoppingListItem(int ID, Vector3Int POS)
+    {
+        id = ID;
+        pos = POS;
+    }
+}
 
 public class Customer : Entity
 {
+    private Image image;
+
+    private List<ShoppingItem> ShoppingItems = new List<ShoppingItem>();
+
     [SerializeField]
     [Header("Customer Testing")]
-    private List<Vector3Int> shoppingList = new List<Vector3Int>();
+    private List<ShoppingListItem> shoppingList = new List<ShoppingListItem>();
+
     [SerializeField]
     [Header("Customer Testing")]
     private Vector3Int exitPoint;
@@ -23,8 +52,12 @@ public class Customer : Entity
     }
 
     
-    public void Setup(Vector3Int spawnPosition, Vector3Int exit, float speed, float wait, ref Grid InputGrid, ref PlacementSystem inputPlacementSystem)
+    public void Setup(Vector3Int spawnPosition, List<Sprite> Sprites, Vector3Int exit, float speed, float wait, ref Grid InputGrid, ref PlacementSystem inputPlacementSystem)
     {
+        for (int i = 0; i < Sprites.Count; i++) {
+            ShoppingItems.Add(new ShoppingItem(i + 1, Sprites[i]));
+        }
+        image = GetComponentInChildren<Image>();
         grid = InputGrid;
         placementSystem = inputPlacementSystem;
         pos = spawnPosition;
@@ -34,7 +67,7 @@ public class Customer : Entity
         Dictionary<Vector3Int, PlacementData> placedObjects = floorData.GetAllPlacedObjects();
 
 
-        Dictionary<int, List<Vector3Int>> storedTiles = new Dictionary<int, List<Vector3Int>>();
+        Dictionary<int, List<ShoppingListItem>> storedTiles = new Dictionary<int, List<ShoppingListItem>>();
         foreach (var entry in placedObjects)
         {
             Vector3Int position = entry.Key;
@@ -44,17 +77,17 @@ public class Customer : Entity
 
             foreach(int id in ids){
                 if(storedTiles.ContainsKey(id)){
-                    List<Vector3Int> outList;
+                    List<ShoppingListItem> outList;
                     storedTiles.TryGetValue(id, out outList);
                     if(outList != null){
-                        outList.Add(position);
+                        outList.Add(new ShoppingListItem(id, position));
                     }
                     else{
-                        outList = new List<Vector3Int>() {position};
+                        outList = new List<ShoppingListItem>() { new ShoppingListItem(id, position) };
                     }
                 }
                 else {
-                    storedTiles.Add(id, new List<Vector3Int>() {position});
+                    storedTiles.Add(id, new List<ShoppingListItem>() { new ShoppingListItem(id, position ) });
                 }
             }
 
@@ -71,10 +104,10 @@ public class Customer : Entity
             itemList.Add(UnityEngine.Random.Range(1, 6));
         }
 
-        shoppingList = new List<Vector3Int>();
+        shoppingList = new List<ShoppingListItem>();
     
         foreach(int item in itemList){
-            List<Vector3Int> tmpTiles;
+            List<ShoppingListItem> tmpTiles;
             storedTiles.TryGetValue(item, out tmpTiles);
             if (tmpTiles != null)
             {
@@ -104,30 +137,39 @@ public class Customer : Entity
     
     private IEnumerator PerformShopping()
     {
-        //print("Customer Beginning to Shop");
+        print("Customer Beginning to Shop");
 
         while (currentTargetIndex < shoppingList.Count)
         {
             if (path == null)
             {
                 print("Finding a path");
-                Vector3Int targetShelf = shoppingList[currentTargetIndex];
-                if (FindPath(targetShelf));
+                ShoppingListItem targetShelf = shoppingList[currentTargetIndex];
+                if (FindPath(targetShelf.pos));
                 {
-                    //print("Found new shelf: " + targetShelf.ToString());
+                    if (image != null && ShoppingItems != null && currentTargetIndex >= 0 && currentTargetIndex < shoppingList.Count && shoppingList[currentTargetIndex].id - 1 >= 0 && shoppingList[currentTargetIndex].id - 1 < ShoppingItems.Count && ShoppingItems[shoppingList[currentTargetIndex].id - 1].image != null)
+                    {
+                        print("sprite changed to: " + (shoppingList[currentTargetIndex].id - 1) + ", " + ShoppingItems[shoppingList[currentTargetIndex].id - 1].image.ToString());
+                        image.sprite = ShoppingItems[shoppingList[currentTargetIndex].id - 1].image;
+                    }
+                    else
+                    {
+                        print("Sprite not changed: " + (image != null) + ", " + (ShoppingItems != null) + ", " + (currentTargetIndex >= 0) + ", " + (currentTargetIndex < shoppingList.Count) + ", " + (shoppingList[currentTargetIndex].id >= 0) + ", " + (shoppingList[currentTargetIndex].id < ShoppingItems.Count) + ", " + (ShoppingItems[shoppingList[currentTargetIndex].id].image != null));
+                    }
+                    print("Found new shelf: " + targetShelf.ToString());
                 }
 
             }
             else
             {
-                Vector3Int targetShelf = shoppingList[currentTargetIndex];
+                ShoppingListItem targetShelf = shoppingList[currentTargetIndex];
                 NAVIGATIONSTATUS tmp = NavigatePath();
-                if (tmp == NAVIGATIONSTATUS.ERROR || (tmp == NAVIGATIONSTATUS.FINISHED && getIntPos().Equals(targetShelf)))
+                if (tmp == NAVIGATIONSTATUS.ERROR || (tmp == NAVIGATIONSTATUS.FINISHED && getIntPos().Equals(targetShelf.pos)))
                 {
                     print("done");
-                    if (getIntPos().Equals(targetShelf))
+                    if (getIntPos().Equals(targetShelf.pos))
                     {
-                        //print("reached shelf: " + targetShelf.ToString());
+                        print("reached shelf: " + targetShelf.ToString());
                         currentTargetIndex++;
                     }
                     path = null;
@@ -135,9 +177,9 @@ public class Customer : Entity
                 else if ((tmp == NAVIGATIONSTATUS.ATTILE || tmp == NAVIGATIONSTATUS.FINISHED) && gridData != null)
                 {
                     path = null;
-                    if (getIntPos().Equals(targetShelf))
+                    if (getIntPos().Equals(targetShelf.pos))
                     {
-                        //print("reached shelf: " + targetShelf.ToString());
+                        print("reached shelf: " + targetShelf.ToString());
                         currentTargetIndex++;
                     }
                     Zombie[] Zombies = Zombie.FindObjectsOfType<Zombie>();
@@ -152,7 +194,16 @@ public class Customer : Entity
                     }
                     if(MinDist <= 4)
                     {
-                        //print("running");
+                        print("running");
+                        if (image != null && 6 < ShoppingItems.Count && ShoppingItems[6].image != null)
+                        {
+                            print("sprite changed to: " + (6) + ", " + ShoppingItems[6].image.ToString());
+                            image.sprite = ShoppingItems[6].image;
+                        }
+                        else
+                        {
+                            print("Sprite not changed: " + (image != null) + ", " + (6 < ShoppingItems.Count) + ", " + (ShoppingItems[6].image != null));
+                        }
                         float maxDist = 0;
                         Vector3Int maxTile = getIntPos();
                         for (int x = -2; x <= 2; x++)
@@ -190,10 +241,19 @@ public class Customer : Entity
 
         while (true)
         {
-            //print("leaving");
+            print("leaving");
             if (path == null)
             {
                 FindPath(exitPoint);
+                if (image != null && 5 < ShoppingItems.Count && ShoppingItems[5].image != null)
+                {
+                    print("sprite changed to: " + (5) + ", " + ShoppingItems[5].image.ToString());
+                    image.sprite = ShoppingItems[5].image;
+                }
+                else
+                {
+                    print("Sprite not changed: " + (image != null) + ", " + (5 < ShoppingItems.Count) + ", " + (ShoppingItems[5].image != null));
+                }
             }
             else
             {

@@ -1,13 +1,18 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class CustomerManager : MonoBehaviour
 {
     [SerializeField]
     [Header("Customer Settings")]
     public GameObject customerPrefab;
-    
+
+    [SerializeField]
+    [Header("Customer Testing")]
+    private List<Sprite> Sprites = new List<Sprite>();
+
     private Vector3Int entryPoint = new Vector3Int(0, 0, -5);
     private Vector3Int exitPoint = new Vector3Int(0, 0, -5);
     [SerializeField]
@@ -23,7 +28,7 @@ public class CustomerManager : MonoBehaviour
 
     private int MaxCustomersInStore = 10;
     private int CurrentCustomersInStore = 0;
-    private int MaxCustomersToBeSpawned = 30;
+    private int MaxCustomersToBeSpawned = 1;
     private int CurrentCustomersSpawned = 0;
     private IEnumerator SpawnCustomers()
     {
@@ -44,7 +49,7 @@ public class CustomerManager : MonoBehaviour
         Customer customerEntity = customer.AddComponent<Customer>();
 
 
-        customerEntity.Setup(entryPoint, exitPoint, customerSpeed, shelfWaitTime, ref grid, ref placementSystem);
+        customerEntity.Setup(entryPoint, Sprites, exitPoint, customerSpeed, shelfWaitTime, ref grid, ref placementSystem);
         customerEntity.StartCustomer();
     }
 
