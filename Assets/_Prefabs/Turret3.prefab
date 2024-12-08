@@ -408,6 +408,7 @@ MonoBehaviour:
   mountPoints:
   - {fileID: 1674182295878481892}
   - {fileID: 1971148304939243784}
+  range: 4
 --- !u!114 &4759572874805474340
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -420,7 +421,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b19213f3d74f549fbb6739646dd1300b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  shotPrefab: {fileID: 7726101378921051771, guid: 6ca1c1f85d13a43da83126ad5da57071,
+  shotPrefab: {fileID: 7726101378921051771, guid: 29f393efdc386ee41aee6077912722cf,
     type: 3}
   gunPoints:
   - {fileID: 3085559133564947708}

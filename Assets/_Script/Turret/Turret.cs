@@ -9,6 +9,7 @@ public class Turret : MonoBehaviour
     public Gun gun;
     public MountPoint[] mountPoints;
     Transform target;
+    public float range = 3;
 
     void OnDrawGizmos()
     {
@@ -44,7 +45,14 @@ public class Turret : MonoBehaviour
 
     void Update()
     {
-        target =  GameObject.FindGameObjectWithTag("Enemy")?.transform;
+        //Only shoot what is in range.
+        Transform detected =  GameObject.FindGameObjectWithTag("Enemy")?.transform;
+        if(!detected) return;
+        if (Vector3.Distance(this.transform.position, detected.position) < range){
+            target = detected;
+        }else{
+            target = null; 
+        }
         // do nothing when no target
         if (!target) return;
             

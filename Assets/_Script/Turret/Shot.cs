@@ -8,7 +8,7 @@ public class Shot : MonoBehaviour
     // public GameObject hitPrefab;
     // public GameObject muzzlePrefab;
     public float speed;
-
+    public float range = 3;
     Rigidbody rb;
     Vector3 velocity;
 
@@ -28,7 +28,7 @@ public class Shot : MonoBehaviour
     {
         var displacement = velocity * Time.deltaTime;
         rb.MovePosition(rb.position + displacement);
-        if (Mathf.Abs(rb.position.x) > 12 || Mathf.Abs(rb.position.y) > 12 || Mathf.Abs(rb.position.z) > 12){
+        if (Mathf.Abs(rb.position.x) > (range + 1) || Mathf.Abs(rb.position.y) > (range + 1) || Mathf.Abs(rb.position.z) > (range + 1)){
             Destroy(gameObject);
         }
     }
