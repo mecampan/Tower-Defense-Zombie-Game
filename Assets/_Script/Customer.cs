@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Drawing;
 using System.IO;
 using System.Security.Cryptography;
 using Unity.Mathematics;
@@ -132,6 +133,7 @@ public class Customer : Entity
         waitTime = wait;
 
         // Start moving toward the first shelf
+        StartCoroutine(FadeIn());
         StartCoroutine(PerformShopping());
     }
     
@@ -262,7 +264,7 @@ public class Customer : Entity
                 {
                     if (pos.Equals(exitPoint))
                     {
-                        StartCoroutine(ShrinkAndLeave());
+                        StartCoroutine(FadeOut());
                         break;
                     }
                 }
@@ -279,26 +281,93 @@ public class Customer : Entity
         this.placementSystem = placementSystem;
     }
 
-    private IEnumerator ShrinkAndLeave()
+    private IEnumerator FadeOut()
     {
-        float shrinkDuration = 1f; // Time it takes to shrink
-        float shrinkSpeed = 2f;    // Movement speed while shrinking
-
-        Vector3 startScale = transform.localScale;
-        float elapsedTime = 0f;
-
-        while (elapsedTime < shrinkDuration)
+        float alpha = 1.0f;
+        float fadeSpeed = 10f;    // Movement speed while shrinking
+        bool bRunAgain = true;
+        while (alpha >= 0.0f)
         {
-            elapsedTime += Time.deltaTime;
+            MeshRenderer[] meshRenderers = GetComponentsInChildren<MeshRenderer>();
+            foreach (MeshRenderer meshRenderer in meshRenderers)
+            {
+                UnityEngine.Color color = meshRenderer.material.color;
+                color.a = alpha;
+                meshRenderer.material.color = color;
+            }
 
-            // Shrink the object
-            float scale = Mathf.Lerp(1f, 0f, elapsedTime / shrinkDuration);
-            transform.localScale = startScale * scale;
-
-            // Continue moving forward
-            transform.position -= transform.forward * shrinkSpeed * Time.deltaTime;
-
+            Image[] images = GetComponentsInChildren<Image>();
+            foreach (Image image in images)
+            {
+                UnityEngine.Color color = image.color;
+                color.a = alpha;
+                image.color = color;
+            }
+            alpha -= fadeSpeed * Time.deltaTime;
             yield return null; // Wait for the next frame
+        }
+        if (true)
+        {
+            MeshRenderer[] meshRenderers = GetComponentsInChildren<MeshRenderer>();
+            foreach (MeshRenderer meshRenderer in meshRenderers)
+            {
+                UnityEngine.Color color = meshRenderer.material.color;
+                color.a = 0.0f;
+                meshRenderer.material.color = color;
+            }
+
+            Image[] images = GetComponentsInChildren<Image>();
+            foreach (Image image in images)
+            {
+                UnityEngine.Color color = image.color;
+                color.a = 0.0f;
+                image.color = color;
+            }
+        }
+    }
+    private IEnumerator FadeIn()
+    {
+        float alpha = 0.0f;
+        float fadeSpeed = 10f;    // Movement speed while shrinking
+        UpdatePos();
+        bool bRunAgain = true;
+        while (alpha <= 1.0)
+        {
+            MeshRenderer[] meshRenderers = GetComponentsInChildren<MeshRenderer>();
+            foreach (MeshRenderer meshRenderer in meshRenderers)
+            {
+                UnityEngine.Color color = meshRenderer.material.color;
+                color.a = alpha;
+                meshRenderer.material.color = color;
+            }
+
+            Image[] images = GetComponentsInChildren<Image>();
+            foreach (Image image in images)
+            {
+                UnityEngine.Color color = image.color;
+                color.a = alpha;
+                image.color = color;
+            }
+            alpha += fadeSpeed * Time.deltaTime;
+            yield return null; // Wait for the next frame
+        }
+        if (true)
+        {
+            MeshRenderer[] meshRenderers = GetComponentsInChildren<MeshRenderer>();
+            foreach (MeshRenderer meshRenderer in meshRenderers)
+            {
+                UnityEngine.Color color = meshRenderer.material.color;
+                color.a = 1.0f;
+                meshRenderer.material.color = color;
+            }
+
+            Image[] images = GetComponentsInChildren<Image>();
+            foreach (Image image in images)
+            {
+                UnityEngine.Color color = image.color;
+                color.a = 1.0f;
+                image.color = color;
+            }
         }
     }
 

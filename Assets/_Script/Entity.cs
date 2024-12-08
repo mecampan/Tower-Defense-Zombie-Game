@@ -147,7 +147,7 @@ public class Entity : MonoBehaviour
         }
         return false;
     }
-    private void UpdatePos()
+    public void UpdatePos()
     {
         transform.position = grid.CellToWorld(getIntPos()) + posOffset + getFloatOffset();
     }
