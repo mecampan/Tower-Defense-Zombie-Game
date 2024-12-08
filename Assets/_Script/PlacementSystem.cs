@@ -82,6 +82,7 @@ public class PlacementSystem : MonoBehaviour
     {
         if (inputManager.IsPointerOverUI())
         {
+            print("clicked on UI");
             return;
         }
         Vector3 mousePosition = inputManager.GetSelectedMapPosition();

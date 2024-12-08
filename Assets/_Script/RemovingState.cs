@@ -63,7 +63,7 @@ public class RemovingState : IBuildingState
 
         // Get the ID of the object to remove
         int objectID = selectedData.GetAllPlacedObjects()[gridPosition].IDs.FirstOrDefault();
-        if (objectID == 0)
+        if (objectID == null || objectID == 0)
         {
             Debug.LogWarning($"No valid ID found for object at position {gridPosition}.");
             return;
