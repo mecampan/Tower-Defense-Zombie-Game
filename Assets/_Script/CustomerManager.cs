@@ -31,7 +31,6 @@ public class CustomerManager : MonoBehaviour
         {
             if (entryPoint != null && CurrentCustomersInStore < MaxCustomersInStore)
             {
-                Debug.Log("Spawning Customer at entry point");
                 SpawnCustomer();
                 CurrentCustomersInStore++;
             }
@@ -41,17 +40,16 @@ public class CustomerManager : MonoBehaviour
     private void SpawnCustomer()
     {
         // Create a new customer and set up their shopping routine
-        GameObject customer = Instantiate(customerPrefab, grid.CellToWorld(entryPoint), Quaternion.identity);
-        Customer customerEntity = customer.AddComponent<Customer>();
+        //GameObject customer = Instantiate(customerPrefab, grid.CellToWorld(entryPoint), Quaternion.identity);
+        //Customer customerEntity = customer.AddComponent<Customer>();
 
 
-        customerEntity.Setup(exitPoint, customerSpeed, shelfWaitTime, ref grid, ref placementSystem);
+        //customerEntity.Setup(exitPoint, customerSpeed, shelfWaitTime, ref grid, ref placementSystem);
         //customerEntity.StartCustomer();
     }
 
     public void BeginCustomerSpawner()
     {
-        Debug.Log("Starting Customer Spawner");
         StartCoroutine(SpawnCustomers());
     }
 }

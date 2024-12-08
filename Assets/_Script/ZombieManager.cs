@@ -18,9 +18,11 @@ public class ZombieManager : MonoBehaviour
     };
 
     public List<Vector3Int> shelves; // List of shelf locations
-    private float spawnInterval = 10f; // Time between zombie spawns
-    [SerializeField]
+    private float spawnInterval = 5f; // Time between zombie spawns
     private float zombieSpeed = 1.5f; // Speed at which zombies move
+    public float shelfWaitTime = 3f; // Time customers wait at each shelf
+    private Vector3Int exitPoint = new Vector3Int(0, 0, -5);
+
     [SerializeField]
     Grid grid;
     [SerializeField]
@@ -31,24 +33,28 @@ public class ZombieManager : MonoBehaviour
     {
         while (CurrentZombiesSpawned < MaxZombiesToBeSpawned)
         {
-            Debug.Log("Spawning Zombie at entry point");
+            Debug.Log("Spawning Zombie at entry point.");
             SpawnZombie();
             CurrentZombiesSpawned++;
+
+            // Reduce spawn interval, with a minimum of 1 second
+            spawnInterval = Mathf.Max(spawnInterval - 0.1f, 1f);
             yield return new WaitForSeconds(spawnInterval);
-            spawnInterval-= 0.5f;
         }
     }
+
     private void SpawnZombie()
     {
-        // Create a new zombie and set up their roaming routine
-        int spawnPosition = UnityEngine.Random.Range(0, entryPoints.Length);
-        Vector3Int spawnPoint = entryPoints[spawnPosition];
+        int spawnIndex = Random.Range(0, entryPoints.Length);
+        Vector3Int spawnPoint = entryPoints[spawnIndex];
 
+        // Create a new customer and set up their shopping routine
         GameObject zombie = Instantiate(zombiePrefab, grid.CellToWorld(spawnPoint), Quaternion.identity);
-        //Customer customerEntity = customer.AddComponent<Customer>();
+        //GameObject zombie = Instantiate(zombiePrefab, grid.CellToWorld(spawnPoint) + new Vector3(-0.5f, 0, -0.5f), Quaternion.identity);
 
+        Zombie zombieEntity = zombie.AddComponent<Zombie>();
 
-        //customerEntity.Setup(exitPoint, customerSpeed, shelfWaitTime, ref grid, ref placementSystem);
+        zombieEntity.Setup(exitPoint, zombieSpeed, shelfWaitTime, ref grid, ref placementSystem);
         //customerEntity.StartCustomer();
     }
 

@@ -56,64 +56,41 @@ public class Entity : MonoBehaviour
 
     protected NAVIGATIONSTATUS NavigatePath()
     {
-        if (placementSystem == null)
+        if (path == null || path.Count == 0) return NAVIGATIONSTATUS.ERROR;
+
+        CurrentTime--;
+        if (CurrentTime <= 0)
         {
-            print("placementSystem not set");
-            return NAVIGATIONSTATUS.ERROR;
+            // Move to the next tile
+            currentIndex--;
+            if (currentIndex >= 0)
+            {
+                CurrentTime = timer;
+                pos = path[currentIndex];
+            }
+            if (currentIndex <= 0) return NAVIGATIONSTATUS.FINISHED;
+            return NAVIGATIONSTATUS.ATTILE;
         }
-        else if(path != null && path.Count > 0)
+        else
         {
-            if (gridData == null)
+            // Smooth movement between tiles
+            if (currentIndex >= 1)
             {
-                gridData = placementSystem.furnitureData;
+                float factor = 1f * CurrentTime / timer;
+                Vector3Int currentTile = path[currentIndex];
+                Vector3Int nextTile = path[currentIndex - 1];
+                pos = Vector3.Lerp(grid.CellToWorld(currentTile), grid.CellToWorld(nextTile), 1f - factor);
             }
-            if (placementSystem.furnitureData != null)
-            {
-                CurrentTime--;
-                if (path != null && CurrentTime <= 0)
-                {
-                    currentIndex--;
-                    if (currentIndex >= 0)
-                    {
-                        CurrentTime = timer;
-                        pos = path[currentIndex];
-                    }
-                    if (currentIndex <= 0)
-                    {
-                        return NAVIGATIONSTATUS.FINISHED;
-                    }
-                    if (currentIndex >= 0)
-                    {
-                        return NAVIGATIONSTATUS.ATTILE;
-                    }
-                }
-                else if (path != null && CurrentTime > 0)
-                {
-                    if (currentIndex >= 0 && currentIndex - 1 >= 0)
-                    {
-                        float factor = 1.0f * (1.0f * CurrentTime) / (1.0f * timer);
-                        Vector3Int tmpVecInt1 = path[currentIndex];
-                        Vector3Int tmpVecInt2 = path[currentIndex - 1];
-                        pos = new Vector3((factor * tmpVecInt1.x) + ((1.0f - factor) * tmpVecInt2.x), (factor * tmpVecInt1.y) + ((1.0f - factor) * tmpVecInt2.y), (factor * tmpVecInt1.z) + ((1.0f - factor) * tmpVecInt2.z));
-                    }
-                }
-                else
-                {
-                    return NAVIGATIONSTATUS.ERROR;
-                }
-            }
-            else
-            {
-                return NAVIGATIONSTATUS.ERROR;
-            }
-            UpdatePos();
-            return NAVIGATIONSTATUS.BETWEENTILES;
         }
-        return NAVIGATIONSTATUS.ERROR;
+
+        UpdatePos();
+        return NAVIGATIONSTATUS.BETWEENTILES;
     }
+
 
     protected bool FindPath(Vector3Int target)
     {
+        
         if (placementSystem == null)
         {
             print("placementSystem not set");
