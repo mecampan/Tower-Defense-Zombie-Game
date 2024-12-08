@@ -13,6 +13,7 @@ public class GameManager : MonoBehaviour
     [SerializeField] private CustomerManager customerManager;
     [SerializeField] private ZombieManager zombieManager;
     [SerializeField] private UIManager uIManager;
+    [SerializeField] private ratingsystem ratingsystem;
 
     public void StartPlayMode()
     {
@@ -84,5 +85,6 @@ public class GameManager : MonoBehaviour
     {
         customerManager.BeginCustomerSpawner();
         zombieManager.BeginZombieSpawner();
+        ratingsystem.SetCustomerCountVisibility(true);
     }
 }

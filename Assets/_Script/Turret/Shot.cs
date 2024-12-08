@@ -37,7 +37,7 @@ public class Shot : MonoBehaviour
     {
         // var hitEffect = Instantiate(hitPrefab, other.GetContact(0).point, Quaternion.identity);
         // Destroy(hitEffect, 5f);
-        print("other object: " + other.gameObject.ToString());
+        //print("other object: " + other.gameObject.ToString());
         Destroy(gameObject);
     }
 

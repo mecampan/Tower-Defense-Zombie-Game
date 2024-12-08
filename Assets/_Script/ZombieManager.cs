@@ -33,7 +33,7 @@ public class ZombieManager : MonoBehaviour
     Grid grid;
     [SerializeField]
     private PlacementSystem placementSystem;
-    private int MaxZombiesToBeSpawned = 50;
+    private int MaxZombiesToBeSpawned = 100;
     private int CurrentZombiesSpawned = 0;
     private IEnumerator SpawnZombies()
     {

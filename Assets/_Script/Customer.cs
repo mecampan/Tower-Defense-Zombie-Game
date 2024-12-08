@@ -45,6 +45,7 @@ public class Customer : Entity
     [Header("Customer Testing")]
     private Vector3Int exitPoint;
     private int currentTargetIndex = 0;
+    private int health = 5;
 
     
     public void Setup(Vector3Int spawnPosition, List<Sprite> Sprites, Vector3Int exit, float speed, float wait, ref Grid InputGrid, ref PlacementSystem inputPlacementSystem)
@@ -267,6 +268,8 @@ public class Customer : Entity
         }
 
         yield return new WaitForSeconds(1f);
+        // Use health to determine star rating system
+        EventManager.UpdateRatingSystem(UnityEngine.Random.Range(1, 5));
         Destroy(gameObject);
     }
 
