@@ -28,7 +28,7 @@ public class CustomerManager : MonoBehaviour
 
     private int MaxCustomersInStore = 10;
     private int CurrentCustomersInStore = 0;
-    private int MaxCustomersToBeSpawned = 1;
+    private int MaxCustomersToBeSpawned = 30;
     private int CurrentCustomersSpawned = 0;
     private IEnumerator SpawnCustomers()
     {

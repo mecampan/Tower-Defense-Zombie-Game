@@ -21,19 +21,15 @@ public class GameManager : MonoBehaviour
             uIManager.ShowDialog(
                 () =>
                 {
-                    Debug.Log("Yes clicked: Transitioning to Play Mode");
-
                     // Ensure popup is destroyed before hiding other UI
                     if (panel != null)
                     {
-                        Debug.Log("Hiding panel...");
                         panel.SetActive(false);
                         textInfo.SetActive(false);
                     }
 
                     if (startPlayModeButton != null)
                     {
-                        Debug.Log("Hiding StartPlayMode button...");
                         startPlayModeButton.SetActive(false);
                     }
 
@@ -42,7 +38,6 @@ public class GameManager : MonoBehaviour
                 },
                 () =>
                 {
-                    Debug.Log("No clicked: Canceled Play Mode");
                 }
             );
         }
