@@ -28,4 +28,13 @@ public static class EventManager
     {
         OnTooltip?.Invoke(string.Empty, false); // Trigger tooltip visibility OFF
     }
+
+    public static Action<int> OnRating;
+
+    // Rating system for customers
+    public static void UpdateRatingSystem(int ratingChange)
+    {
+        OnRating?.Invoke(ratingChange);
+    }
+
 }
