@@ -23,12 +23,13 @@ public class Customer : Entity
     }
 
     
-    public void Setup(Vector3Int exit, float speed, float wait, ref Grid InputGrid, ref PlacementSystem inputPlacementSystem)
+    public void Setup(Vector3Int spawnPosition, Vector3Int exit, float speed, float wait, ref Grid InputGrid, ref PlacementSystem inputPlacementSystem)
     {
         grid = InputGrid;
         placementSystem = inputPlacementSystem;
+        pos = spawnPosition;
 
-        
+
         GridData floorData = placementSystem.floorData;
         Dictionary<Vector3Int, PlacementData> placedObjects = floorData.GetAllPlacedObjects();
 
@@ -75,8 +76,11 @@ public class Customer : Entity
         foreach(int item in itemList){
             List<Vector3Int> tmpTiles;
             storedTiles.TryGetValue(item, out tmpTiles);
-            int tmpIndex = UnityEngine.Random.Range(0, tmpTiles.Count);
-            shoppingList.Add(tmpTiles[tmpIndex]);
+            if (tmpTiles != null)
+            {
+                int tmpIndex = UnityEngine.Random.Range(0, tmpTiles.Count);
+                shoppingList.Add(tmpTiles[tmpIndex]);
+            }
         }
 
         //print("shoppingListLen: " + shoppingList.Count);

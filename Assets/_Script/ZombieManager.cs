@@ -8,26 +8,26 @@ public class ZombieManager : MonoBehaviour
     public GameObject zombiePrefab;
     private Vector3Int[] entryPoints = new Vector3Int[]
     {
-        new Vector3Int(0, 0, 5),
-        new Vector3Int(1, 0, 5),
-        new Vector3Int(2, 0, 5),
-        new Vector3Int(3, 0, 5),
-        new Vector3Int(-1, 0, 5),
-        new Vector3Int(-2, 0, 5),
-        new Vector3Int(-3, 0, 5),        
+        new Vector3Int(0, 0, 4),
+        new Vector3Int(1, 0, 4),
+        new Vector3Int(2, 0, 4),
+        new Vector3Int(3, 0, 4),
+        new Vector3Int(-1, 0, 4),
+        new Vector3Int(-2, 0, 4),
+        new Vector3Int(-3, 0, 4),        
     };
 
     public List<Vector3Int> shelves; // List of shelf locations
     private float spawnInterval = 5f; // Time between zombie spawns
     private float zombieSpeed = 1.5f; // Speed at which zombies move
-    public float shelfWaitTime = 3f; // Time customers wait at each shelf
+    public float ZombieDeltaTime = 0.03f; // Time customers wait at each shelf
     private Vector3Int exitPoint = new Vector3Int(0, 0, -5);
 
     [SerializeField]
     Grid grid;
     [SerializeField]
     private PlacementSystem placementSystem;
-    private int MaxZombiesToBeSpawned = 30;
+    private int MaxZombiesToBeSpawned = 5;
     private int CurrentZombiesSpawned = 0;
     private IEnumerator SpawnZombies()
     {
@@ -54,7 +54,7 @@ public class ZombieManager : MonoBehaviour
 
         Zombie zombieEntity = zombie.AddComponent<Zombie>();
 
-        zombieEntity.Setup(exitPoint, zombieSpeed, shelfWaitTime, ref grid, ref placementSystem);
+        zombieEntity.Setup(spawnPoint, exitPoint, zombieSpeed, ZombieDeltaTime, ref grid, ref placementSystem);
         //customerEntity.StartCustomer();
     }
 

@@ -14,7 +14,7 @@ public class Zombie : Entity
     private Vector3Int exitPoint;
     private int currentTargetIndex = 0;
     private int health = 5;
-
+    protected float waitTime = 0.003f;
     public void StartZombie()
     {
         StartCoroutine(StartRoaming());
@@ -35,12 +35,14 @@ public class Zombie : Entity
         }
     }
     
-    public void Setup(Vector3Int exit, float speed, float wait, ref Grid InputGrid, ref PlacementSystem inputPlacementSystem)
+    public void Setup(Vector3Int spawnPosition, Vector3Int exit, float speed, float DeltaTime, ref Grid InputGrid, ref PlacementSystem inputPlacementSystem)
     {
         grid = InputGrid;
         placementSystem = inputPlacementSystem;
+        pos = spawnPosition;
 
-        
+
+
         GridData floorData = placementSystem.floorData;
         Dictionary<Vector3Int, PlacementData> placedObjects = floorData.GetAllPlacedObjects();
 
@@ -76,7 +78,7 @@ public class Zombie : Entity
 
         exitPoint = exit;
         moveSpeed = speed;
-        waitTime = wait;
+        waitTime = DeltaTime;
 
         // Start moving to random locations
         StartCoroutine(StartRoaming());
@@ -94,10 +96,8 @@ public class Zombie : Entity
 
             if (path != null && path.Count > 0)
             {
-                yield return new WaitForSeconds(2f); // Wait before the next step
                 NAVIGATIONSTATUS navStatus = NavigatePath();
                 Debug.Log("Navigating the Path");
-                yield return new WaitForSeconds(2f); // Wait before the next step
 
                 if (navStatus == NAVIGATIONSTATUS.ERROR)
                 {
@@ -110,7 +110,7 @@ public class Zombie : Entity
                     break; // Stop moving once the zombie reaches the exit
                 }
             }
-
+            Debug.Log("waiting " + waitTime +  " seconds");
             yield return new WaitForSeconds(waitTime); // Wait before the next step
         }
 

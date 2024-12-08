@@ -39,13 +39,13 @@ public class CustomerManager : MonoBehaviour
     }
     private void SpawnCustomer()
     {
-        // Create a new customer and set up their shopping routine
-        //GameObject customer = Instantiate(customerPrefab, grid.CellToWorld(entryPoint), Quaternion.identity);
-        //Customer customerEntity = customer.AddComponent<Customer>();
+        //Create a new customer and set up their shopping routine
+        GameObject customer = Instantiate(customerPrefab, grid.CellToWorld(entryPoint), Quaternion.identity);
+        Customer customerEntity = customer.AddComponent<Customer>();
 
 
-        //customerEntity.Setup(exitPoint, customerSpeed, shelfWaitTime, ref grid, ref placementSystem);
-        //customerEntity.StartCustomer();
+        customerEntity.Setup(entryPoint, exitPoint, customerSpeed, shelfWaitTime, ref grid, ref placementSystem);
+        customerEntity.StartCustomer();
     }
 
     public void BeginCustomerSpawner()
