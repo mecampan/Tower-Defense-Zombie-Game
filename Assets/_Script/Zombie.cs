@@ -426,11 +426,12 @@ public class Zombie : Entity
 
     void OnCollisionEnter(Collision other)
     {
+        Debug.Log("Zombie hit!");
         // Check if the colliding object is tagged as "Bullet"
         if (other.gameObject.CompareTag("Bullet"))
         {
             health -= 1;
-            //Debug.Log($"Zombie took {1} damage. Health remaining: {health}");
+            Debug.Log($"Zombie took {1} damage. Health remaining: {health}");
 
             if (health <= 0)
             {

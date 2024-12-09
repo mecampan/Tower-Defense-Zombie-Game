@@ -284,7 +284,6 @@ public class Customer : Entity
 
     private IEnumerator takeDamageCoroutine()
     {
-        Debug.Log("Customer hit by Enemy!");
         takeDamage();
 
         // Prevent further damage for a short duration
