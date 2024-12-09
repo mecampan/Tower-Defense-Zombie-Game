@@ -430,7 +430,7 @@ public class Zombie : Entity
         if (other.gameObject.CompareTag("Bullet"))
         {
             health -= 1;
-            //Debug.Log($"Zombie took {1} damage. Health remaining: {health}");
+            Debug.Log($"Zombie took {1} damage. Health remaining: {health}");
 
             if (health <= 0)
             {

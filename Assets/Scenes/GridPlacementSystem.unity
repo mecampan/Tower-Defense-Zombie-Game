@@ -5760,7 +5760,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b39ade4c0d3903a4b90de0c4c3508669, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  customerPrefab: {fileID: 2181907222083929351, guid: ed909814f3ebef043a199dfab278ae49,
+  customerPrefab: {fileID: 3372207368528521455, guid: 211035346d7a92b49bec143036e0bb08,
     type: 3}
   Sprites:
   - {fileID: 21300000, guid: dc121577156470d469d99b10e154a0fa, type: 3}

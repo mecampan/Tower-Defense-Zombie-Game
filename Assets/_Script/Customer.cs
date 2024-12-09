@@ -276,6 +276,7 @@ public class Customer : Entity
 
     private void OnTriggerEnter(Collider other)
     {
+        Debug.Log("Collision with enemy");
         if (other.CompareTag("Enemy") && canTakeDamage)
         {
             StartCoroutine(takeDamageCoroutine());
@@ -284,7 +285,6 @@ public class Customer : Entity
 
     private IEnumerator takeDamageCoroutine()
     {
-        Debug.Log("Customer hit by Enemy!");
         takeDamage();
 
         // Prevent further damage for a short duration
