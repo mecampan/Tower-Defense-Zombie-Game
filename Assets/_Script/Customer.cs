@@ -202,23 +202,30 @@ public class Customer : Entity
                         {
                             print("Sprite not changed: " + (image != null) + ", " + (6 < ShoppingItems.Count) + ", " + (ShoppingItems[6].image != null));
                         }
+
+
                         float maxDist = 0;
                         Vector3Int maxTile = getIntPos();
-                        for (int x = -2; x <= 2; x++)
+                        for (int x = -1; x <= 1; x++)
                         {
-                            for (int z = -2; z <= 2; z++)
+                            for (int z = -1; z <= 1; z++)
                             {
-                                Vector3Int tmpTile = new Vector3Int(getIntPos().x + x, 0, getIntPos().z + z);
-                                foreach (Zombie zombie in Zombies)
+                                if (x != 0 || z != 0)
                                 {
-                                    float tmpDist = Vector3Int.Distance(tmpTile, zombie.getIntPos());
-                                    if (tmpDist > maxDist && Navagation.IsOnGrid(tmpTile) && gridData != null && gridData.IsTileOpen(tmpTile))
+                                    float minDist = float.MaxValue;
+                                    Vector3Int tmpTile = new Vector3Int(getIntPos().x + x, 0, getIntPos().z + z);
+                                    foreach (Zombie zombie in Zombies)
                                     {
-                                        if (FindPath(tmpTile))
+                                        float tmpDist = Vector3Int.Distance(tmpTile, zombie.getIntPos());
+                                        if (tmpDist < minDist && Navagation.IsOnGrid(tmpTile) && gridData != null && gridData.IsTileOpen(tmpTile) && FindPath(tmpTile))
                                         {
-                                            maxDist = tmpDist;
-                                            maxTile = new Vector3Int(tmpTile.x, 0, tmpTile.z);
+                                            minDist = tmpDist;
                                         }
+                                    }
+                                    if (minDist != float.MaxValue && minDist > maxDist && Navagation.IsOnGrid(tmpTile) && gridData != null && gridData.IsTileOpen(tmpTile))
+                                    {
+                                        maxDist = minDist;
+                                        maxTile = new Vector3Int(tmpTile.x, 0, tmpTile.z);
                                     }
                                 }
                             }
