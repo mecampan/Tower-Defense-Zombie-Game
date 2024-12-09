@@ -46,6 +46,7 @@ public class Customer : Entity
     private Vector3Int exitPoint;
     private int currentTargetIndex = 0;
     private int health = 5;
+    private bool canTakeDamage = true;
 
     
     public void Setup(Vector3Int spawnPosition, List<Sprite> Sprites, Vector3Int exit, float speed, float wait, ref Grid InputGrid, ref PlacementSystem inputPlacementSystem)
@@ -269,8 +270,45 @@ public class Customer : Entity
 
         yield return new WaitForSeconds(1f);
         // Use health to determine star rating system
-        EventManager.UpdateRatingSystem(UnityEngine.Random.Range(1, 5));
+        EventManager.UpdateRatingSystem(health);
         Destroy(gameObject);
+    }
+
+    private void OnTriggerEnter(Collider other)
+    {
+        if (other.CompareTag("Enemy") && canTakeDamage)
+        {
+            StartCoroutine(takeDamageCoroutine());
+        }
+    }
+
+    private IEnumerator takeDamageCoroutine()
+    {
+        Debug.Log("Customer hit by Enemy!");
+        takeDamage();
+
+        // Prevent further damage for a short duration
+        canTakeDamage = false;
+        yield return new WaitForSeconds(1f); // Delay before taking damage again
+        canTakeDamage = true;
+    }
+
+    private void takeDamage()
+    {
+        health--;
+        Debug.Log($"Customer health: {health}");
+
+        if (health <= 0)
+        {
+            Debug.Log("Customer died.");
+            EventManager.UpdateRatingSystem(health);
+            Destroy(gameObject);
+        }
+    }
+
+    private void OnDestroy()
+    {
+        EventManager.OnCustomerDestroyed?.Invoke(gameObject);
     }
 
     internal void SetPlacementSystem(PlacementSystem placementSystem)

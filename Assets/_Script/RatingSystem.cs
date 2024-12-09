@@ -95,7 +95,7 @@ public class ratingsystem : MonoBehaviour
         // Ensure rating stays between bounds
         rating = Mathf.Clamp(rating, minRating, starImages.Length);
 
-        Debug.Log($"Average Rating: {rating} (Total Stars: {totalStars}, Customers: {totalCustomers})");
+        //Debug.Log($"Average Rating: {rating} (Total Stars: {totalStars}, Customers: {totalCustomers})");
         RatingAnimationEffect(amount);
         UpdateRatingUI();
     }

@@ -4,8 +4,10 @@ using UnityEngine;
 
 public class ZombieManager : MonoBehaviour
 {
-    [SerializeField]
-    public GameObject zombiePrefab;
+    [SerializeField] Grid grid;
+    [SerializeField] private PlacementSystem placementSystem;
+    [SerializeField] public GameObject zombiePrefab;
+
     private Vector3Int[] entryPoints = new Vector3Int[]
     {
         //Left Side Spawns
@@ -23,28 +25,28 @@ public class ZombieManager : MonoBehaviour
     };
 
     public List<Vector3Int> shelves; // List of shelf locations
-    private float spawnInterval = 4f; // Time between zombie spawns
+    private float spawnInterval = 8f; // Time between zombie spawns
     private float zombieSpeed = 2f; // Speed at which zombies move
     [SerializeField]
     public float ZombieDeltaTime = 0.01f; // Time customers wait at each shelf
     private Vector3Int exitPoint = new Vector3Int(0, 0, -5);
+    private List<GameObject> zombiesInStore = new List<GameObject>(); // Track zombies
+    private int MaxZombiesToBeSpawned = 100; 
+    private int MaxZombiesInStore = 50;
 
-    [SerializeField]
-    Grid grid;
-    [SerializeField]
-    private PlacementSystem placementSystem;
-    private int MaxZombiesToBeSpawned = 100;
-    private int CurrentZombiesSpawned = 0;
     private IEnumerator SpawnZombies()
     {
-        while (CurrentZombiesSpawned < MaxZombiesToBeSpawned)
+        while (zombiesInStore.Count < MaxZombiesToBeSpawned)
         {
-            SpawnZombie();
-            CurrentZombiesSpawned++;
+            if (zombiesInStore.Count < MaxZombiesInStore)
+            {
+                SpawnZombie();
+            }
 
             yield return new WaitForSeconds(spawnInterval);
-            spawnInterval-= 0.5f;
-            if(spawnInterval < 1f)
+
+            spawnInterval -= 0.2f;
+            if (spawnInterval < 1f)
             {
                 spawnInterval = 1f;
             }
@@ -56,18 +58,32 @@ public class ZombieManager : MonoBehaviour
         int spawnIndex = Random.Range(0, entryPoints.Length);
         Vector3Int spawnPoint = entryPoints[spawnIndex];
 
-        // Create a new customer and set up their shopping routine
         GameObject zombie = Instantiate(zombiePrefab, grid.CellToWorld(spawnPoint), Quaternion.identity);
-        //GameObject zombie = Instantiate(zombiePrefab, grid.CellToWorld(spawnPoint) + new Vector3(-0.5f, 0, -0.5f), Quaternion.identity);
+        zombiesInStore.Add(zombie);
 
         Zombie zombieEntity = zombie.AddComponent<Zombie>();
-
         zombieEntity.Setup(spawnPoint, exitPoint, zombieSpeed, ZombieDeltaTime, ref grid, ref placementSystem);
-        //customerEntity.StartCustomer();
     }
 
     public void BeginZombieSpawner()
     {
         StartCoroutine(SpawnZombies());
+    }
+
+    private void OnEnable()
+    {
+        EventManager.OnZombieDestroyed += HandleZombieDestroyed;
+    }
+
+    private void OnDisable()
+    {
+        EventManager.OnZombieDestroyed -= HandleZombieDestroyed;
+    }
+    private void HandleZombieDestroyed(GameObject zombie)
+    {
+        if (zombiesInStore.Contains(zombie))
+        {
+            zombiesInStore.Remove(zombie);
+        }
     }
 }

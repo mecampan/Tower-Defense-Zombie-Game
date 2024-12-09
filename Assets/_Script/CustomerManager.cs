@@ -26,19 +26,14 @@ public class CustomerManager : MonoBehaviour
     [SerializeField]
     private PlacementSystem placementSystem;
 
-    private int MaxCustomersInStore = 10;
-    private int CurrentCustomersInStore = 0;
     private int MaxCustomersToBeSpawned = 30;
     private int CurrentCustomersSpawned = 0;
     private IEnumerator SpawnCustomers()
     {
         while (CurrentCustomersSpawned < MaxCustomersToBeSpawned)
         {
-            if (entryPoint != null && CurrentCustomersInStore < MaxCustomersInStore)
-            {
-                SpawnCustomer();
-                CurrentCustomersInStore++;
-            }
+            SpawnCustomer();
+            CurrentCustomersSpawned++;
             yield return new WaitForSeconds(7f);
         }
     }
@@ -57,6 +52,21 @@ public class CustomerManager : MonoBehaviour
     {
         StartCoroutine(SpawnCustomers());
     }
+    private void OnEnable()
+    {
+        EventManager.OnCustomerDestroyed += HandleCustomerDestroyed;
+    }
+
+    private void OnDisable()
+    {
+        EventManager.OnCustomerDestroyed -= HandleCustomerDestroyed;
+    }
+    private void HandleCustomerDestroyed(GameObject customer)
+    {
+        CurrentCustomersSpawned--;
+    }
+
+
 }
 //public class CustomerManager : MonoBehaviour
 //{

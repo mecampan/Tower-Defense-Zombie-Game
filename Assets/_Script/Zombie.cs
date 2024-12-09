@@ -440,6 +440,12 @@ public class Zombie : Entity
         }
     }
 
+    private void OnDestroy()
+    {
+        // Notify the manager via EventManager
+        EventManager.OnZombieDestroyed?.Invoke(gameObject);
+    }
+
     public void Setup(Vector3Int spawnPosition, Vector3Int exit, float speed, float DeltaTime, ref Grid InputGrid, ref PlacementSystem inputPlacementSystem)
     {
         grid = InputGrid;

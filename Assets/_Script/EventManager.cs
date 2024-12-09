@@ -1,4 +1,5 @@
 using System;
+using UnityEngine;
 
 public static class EventManager
 {
@@ -37,4 +38,6 @@ public static class EventManager
         OnRating?.Invoke(ratingChange);
     }
 
+    public static Action<GameObject> OnZombieDestroyed; // Event for zombie destruction
+    public static Action<GameObject> OnCustomerDestroyed; // Event for customer destruction
 }
